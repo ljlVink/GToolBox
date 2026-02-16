@@ -1,0 +1,148 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "GToolBox"
+    },
+    {
+      "name": "home_title",
+      "value": "主页"
+    },
+    {
+      "name": "device_title",
+      "value": "设备"
+    },
+    {
+      "name": "settings_title",
+      "value": "设置"
+    },
+    {
+      "name": "logs_title",
+      "value": "日志"
+    },
+    {
+      "name": "connect_status_connecting",
+      "value": "连接中..."
+    },
+    {
+      "name": "connect_status_connected",
+      "value": "连接成功"
+    },
+    {
+      "name": "connect_status_not_configured",
+      "value": "未配置"
+    },
+    {
+      "name": "connect_status_fail",
+      "value": "[失败]"
+    },
+    {
+      "name": "connect_status_daemon_fail",
+      "value": "[失败] 启动守护进程失败"
+    },
+    {
+      "name": "connect_status_port_not_configured",
+      "value": "[失败] 端口未配置"
+    },
+    {
+      "name": "refresh_dialog_title",
+      "value": "注意"
+    },
+    {
+      "name": "refresh_dialog_message",
+      "value": "即将打开HiSmartPerf以获取应用信息。请务必保持HiSmartPerf在前台。数据收集完成后将自动返回到本程序。"
+    },
+    {
+      "name": "refresh_dialog_confirm",
+      "value": "确定"
+    },
+    {
+      "name": "open_ability",
+      "value": "打开应用"
+    },
+    {
+      "name": "set_game",
+      "value": "设为游戏"
+    },
+    {
+      "name": "remove_from_game",
+      "value": "移除游戏标记"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "game_set_success",
+      "value": "\"{0}\" 已被设为游戏"
+    },
+    {
+      "name": "game_remove_success",
+      "value": "\"{0}\" 已从游戏列表中移除"
+    },
+    {
+      "name": "game_status_update_failed",
+      "value": "更新游戏状态失败"
+    },
+    {
+      "name": "game_status_update_error",
+      "value": "更新游戏状态时出错"
+    },
+    {
+      "name": "reboot_recovery",
+      "value": "重启到恢复模式"
+    },
+    {
+      "name": "reboot_bootloader",
+      "value": "重启到引导模式"
+    },
+    {
+      "name": "settings_port_label",
+      "value": "端口"
+    },
+    {
+      "name": "settings_port_placeholder",
+      "value": "输入端口号"
+    },
+    {
+      "name": "settings_hide_atomic_service",
+      "value": "隐藏原子服务包"
+    },
+    {
+      "name": "settings_save_button",
+      "value": "保存设置"
+    },
+    {
+      "name": "settings_save_success",
+      "value": "设置保存成功！重启以应用"
+    },
+    {
+      "name": "settings_save_failed",
+      "value": "保存设置失败：{0}"
+    },
+    {
+      "name": "settings_port_required",
+      "value": "请输入有效的端口"
+    },
+    {
+      "name": "settings_port_invalid",
+      "value": "端口必须在1到65535之间"
+    },
+    {
+      "name": "logs_ready",
+      "value": "就绪..."
+    },
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "描述"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "GToolBox"
+    }
+  ]
+}

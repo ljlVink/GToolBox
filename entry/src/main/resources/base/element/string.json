@@ -1,0 +1,148 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "GToolBox"
+    },
+    {
+      "name": "home_title",
+      "value": "Home"
+    },
+    {
+      "name": "device_title",
+      "value": "Device"
+    },
+    {
+      "name": "settings_title",
+      "value": "Settings"
+    },
+    {
+      "name": "logs_title",
+      "value": "Logs"
+    },
+    {
+      "name": "connect_status_connecting",
+      "value": "Connecting..."
+    },
+    {
+      "name": "connect_status_connected",
+      "value": "Connect OK"
+    },
+    {
+      "name": "connect_status_not_configured",
+      "value": "Not configured"
+    },
+    {
+      "name": "connect_status_fail",
+      "value": "[fail]"
+    },
+    {
+      "name": "connect_status_daemon_fail",
+      "value": "[fail] Start daemon failed"
+    },
+    {
+      "name": "connect_status_port_not_configured",
+      "value": "[fail] Port not configured"
+    },
+    {
+      "name": "refresh_dialog_title",
+      "value": "Note"
+    },
+    {
+      "name": "refresh_dialog_message",
+      "value": "HiSmartPerf is about to open to retrieve app information. Please keep HiSmartPerf in the foreground; you will be automatically returned to this program once data collection is complete."
+    },
+    {
+      "name": "refresh_dialog_confirm",
+      "value": "ok"
+    },
+    {
+      "name": "open_ability",
+      "value": "Open Ability"
+    },
+    {
+      "name": "set_game",
+      "value": "Set Bundle to Game"
+    },
+    {
+      "name": "remove_from_game",
+      "value": "Remove from Game"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancel"
+    },
+    {
+      "name": "game_set_success",
+      "value": "\"{0}\" has been set as a game"
+    },
+    {
+      "name": "game_remove_success",
+      "value": "\"{0}\" has been removed from game list"
+    },
+    {
+      "name": "game_status_update_failed",
+      "value": "Failed to update game status"
+    },
+    {
+      "name": "game_status_update_error",
+      "value": "Error updating game status"
+    },
+    {
+      "name": "reboot_recovery",
+      "value": "Reboot to Recovery"
+    },
+    {
+      "name": "reboot_bootloader",
+      "value": "Reboot to Bootloader"
+    },
+    {
+      "name": "settings_port_label",
+      "value": "Port"
+    },
+    {
+      "name": "settings_port_placeholder",
+      "value": "Enter port number"
+    },
+    {
+      "name": "settings_hide_atomic_service",
+      "value": "Hide atomicservice package"
+    },
+    {
+      "name": "settings_save_button",
+      "value": "Save Settings"
+    },
+    {
+      "name": "settings_save_success",
+      "value": "Settings saved successfully! Restart to apply"
+    },
+    {
+      "name": "settings_save_failed",
+      "value": "Failed to save settings: {0}"
+    },
+    {
+      "name": "settings_port_required",
+      "value": "Please enter a valid port"
+    },
+    {
+      "name": "settings_port_invalid",
+      "value": "Port must be between 1 and 65535"
+    },
+    {
+      "name": "logs_ready",
+      "value": "Ready..."
+    },
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "GToolBox"
+    }
+  ]
+}
