@@ -1,11 +1,7 @@
 {
   "app": {
     "signingConfigs": [
-      {
-        "name": "default",
-        "type": "HarmonyOS",
 
-      }
     ],
     "products": [
       {
