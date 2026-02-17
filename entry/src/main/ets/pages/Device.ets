@@ -1,4 +1,4 @@
-import { LogService } from '../utils/LogService';
+import { deviceInfo } from '@kit.BasicServicesKit';
 import { HdcClient } from '../utils/HdcClient';
 
 @Component
@@ -19,6 +19,18 @@ export struct DevicePage {
   async rebootNormal() {
     try {
       await this.hdcClient.executeCommand('target boot');
+    } catch (error) {}
+  }
+
+  async targetMount() {
+    try {
+      await this.hdcClient.executeCommand('target mount');
+    } catch (error) {}
+  }
+
+  async smodeRoot() {
+    try {
+      await this.hdcClient.executeCommand('smode');
     } catch (error) {}
   }
 
@@ -96,6 +108,50 @@ export struct DevicePage {
         .onClick(() => {
           this.rebootToBootloader();
         })
+
+        if (deviceInfo.distributionOSName !== 'HarmonyOS') {
+          Button() {
+            Row({ space: 12 }) {
+              Image($r('app.media.rays'))
+                .width(24)
+                .height(24)
+                .fillColor($r('app.color.button_text'))
+              Text($r('app.string.target_mount'))
+                .fontSize(18)
+                .fontColor($r('app.color.button_text'))
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+          }
+          .width('100%')
+          .height(56)
+          .backgroundColor($r('app.color.error_color'))
+          .borderRadius(12)
+          .onClick(() => {
+            this.targetMount();
+          })
+
+          Button() {
+            Row({ space: 12 }) {
+              Image($r('app.media.rays'))
+                .width(24)
+                .height(24)
+                .fillColor($r('app.color.button_text'))
+              Text($r('app.string.smode_root'))
+                .fontSize(18)
+                .fontColor($r('app.color.button_text'))
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+          }
+          .width('100%')
+          .height(56)
+          .backgroundColor($r('app.color.error_color'))
+          .borderRadius(12)
+          .onClick(() => {
+            this.smodeRoot();
+          })
+        }
       }
       .width('90%')
       .margin({ top: 20 })

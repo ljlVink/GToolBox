@@ -151,6 +151,14 @@
     {
       "name": "reboot_nornal",
       "value": "Nornal Reboot"
+    },
+    {
+      "name": "target_mount",
+      "value": "Mount /system/vendor RW"
+    },
+    {
+      "name": "smode_root",
+      "value": "Set HDC Root"
     }
   ]
 }
