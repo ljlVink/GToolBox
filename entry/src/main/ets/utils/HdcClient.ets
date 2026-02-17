@@ -29,7 +29,7 @@ export interface HdcConnectionResult {
 }
 
 @Concurrent
-async function backgroundStartDaemon(workPath: string): Promise<number> {
+async function backgroundStartDaemon(workPath: string): Promise<boolean> {
   const filesToDelete = ["hdc.socket", "hdc.pid", "hdc.out", ".HDCServer.pid"];
   filesToDelete.forEach(fileName => {
     let filePath = workPath + fileName;

@@ -143,6 +143,10 @@
     {
       "name": "EntryAbility_label",
       "value": "GToolBox"
+    },
+    {
+      "name": "reboot_nornal",
+      "value": "Nornal Reboot"
     }
   ]
 }
