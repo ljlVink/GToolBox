@@ -143,6 +143,14 @@
     {
       "name": "EntryAbility_label",
       "value": "GToolBox"
+    },
+    {
+      "name": "reboot_nornal",
+      "value": "重启设备"
+    },
+    {
+      "name": "terminal_title",
+      "value": "HDC终端"
     }
   ]
 }

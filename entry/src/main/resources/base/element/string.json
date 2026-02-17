@@ -21,6 +21,10 @@
       "value": "Logs"
     },
     {
+      "name": "terminal_title",
+      "value": "Terminal"
+    },
+    {
       "name": "connect_status_connecting",
       "value": "Connecting..."
     },

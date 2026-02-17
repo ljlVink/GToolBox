@@ -2,6 +2,7 @@ import { HomePage } from './Index';
 import { SettingsPage } from './Settings';
 import { LogPage } from './LogPage';
 import { DevicePage } from './Device';
+import { TerminalPage } from './TerminalPage';
 
 @Entry
 @Component
@@ -43,16 +44,20 @@ struct MainPage {
         DevicePage()
       }
       .tabBar(this.TabBuilder($r('app.string.device_title'), 1, $r('app.media.bolt'), $r('app.media.bolt')))
+      TabContent() {
+        TerminalPage()
+      }
+      .tabBar(this.TabBuilder($r('app.string.terminal_title'), 2, $r('app.media.terminal'), $r('app.media.terminal')))
 
       TabContent() {
         LogPage()
       }
-      .tabBar(this.TabBuilder($r('app.string.logs_title'), 2, $r('app.media.doc_plaintext'), $r('app.media.doc_plaintext')))
+      .tabBar(this.TabBuilder($r('app.string.logs_title'), 3, $r('app.media.doc_plaintext'), $r('app.media.doc_plaintext')))
 
       TabContent() {
         SettingsPage()
       }
-      .tabBar(this.TabBuilder($r('app.string.settings_title'), 3, $r('app.media.gearshape'), $r('app.media.gearshape')))
+      .tabBar(this.TabBuilder($r('app.string.settings_title'), 4, $r('app.media.gearshape'), $r('app.media.gearshape')))
 
     }
     .width('100%')
