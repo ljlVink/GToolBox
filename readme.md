@@ -12,3 +12,4 @@
 
 - [LHDC](https://github.com/ljlVink/developtools_hdc)
 - [HiSmartPerf Device](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/smartperf-guidelines)
+- [HiSH](https://github.com/harmoninux/HiSH)
