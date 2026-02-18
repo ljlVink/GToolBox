@@ -99,7 +99,7 @@ export struct DevicePage {
       try {
         this.logService.appendLog('Installing HAP...');
         let result = await this.hdcClient.executeCommand(`install ${tempFilePathResult}`);
-        this.logService.appendLog(result);z
+        this.logService.appendLog(result);
         this.logService.appendLog('HAP installation completed');
       } catch (installError) {
         this.logService.appendLog(`Installation failed: ${(installError as Error).message}`);
