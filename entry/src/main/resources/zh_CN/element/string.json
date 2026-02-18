@@ -6,7 +6,7 @@
     },
     {
       "name": "home_title",
-      "value": "主页"
+      "value": "GToolBox"
     },
     {
       "name": "device_title",
@@ -151,6 +151,22 @@
     {
       "name": "terminal_title",
       "value": "HDC终端"
+    },
+    {
+      "name": "install_hap",
+      "value": "安装 HAP 包 (不支持签名)"
+    },
+    {
+      "name": "install_hap_success",
+      "value": "HAP 包安装成功"
+    },
+    {
+      "name": "install_hap_failed",
+      "value": "HAP 包安装失败: {0}"
+    },
+    {
+      "name": "select_hap_file",
+      "value": "选择 HAP 文件"
     }
   ]
 }

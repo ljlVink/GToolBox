@@ -6,7 +6,7 @@
     },
     {
       "name": "home_title",
-      "value": "Home"
+      "value": "GToolBox"
     },
     {
       "name": "device_title",
@@ -159,6 +159,26 @@
     {
       "name": "smode_root",
       "value": "Set HDC Root"
+    },
+    {
+      "name": "install_hap",
+      "value": "Install HAP Package (Unsupported Signature)"
+    },
+    {
+      "name": "installing",
+      "value": "Installing..."
+    },
+    {
+      "name": "install_hap_success",
+      "value": "HAP package installed successfully"
+    },
+    {
+      "name": "install_hap_failed",
+      "value": "Failed to install HAP package: {0}"
+    },
+    {
+      "name": "select_hap_file",
+      "value": "Select HAP File"
     }
   ]
 }
