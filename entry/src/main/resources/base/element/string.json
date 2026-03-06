@@ -113,6 +113,10 @@
       "value": "Hide atomicservice package"
     },
     {
+      "name": "settings_skip_app_icon",
+      "value": "Skip app icon when fetching app list"
+    },
+    {
       "name": "settings_save_button",
       "value": "Save Settings"
     },

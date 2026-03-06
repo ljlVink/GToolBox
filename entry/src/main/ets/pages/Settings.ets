@@ -7,6 +7,7 @@ export struct SettingsPage {
   @State portInput: string = '5555';
   @State saveStatus: string = '';
   @State hideAtomicService: boolean = true;
+  @State skipAppIcon: boolean = false;
   private preferencesStore: preferences.Preferences | null = null;
 
   async aboutToAppear() {
@@ -19,8 +20,10 @@ export struct SettingsPage {
       this.preferencesStore = await preferences.getPreferences(context, 'hdc_settings');
       const savedPort = await this.preferencesStore.get('port', '5555');
       const savedHideAtomic = await this.preferencesStore.get('hideAtomicService', true);
+      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', false);
       this.portInput = savedPort as string;
       this.hideAtomicService = savedHideAtomic as boolean;
+      this.skipAppIcon = savedSkipAppIcon as boolean;
     } catch (error) {
       console.error('Failed to load settings: ' + (error as BusinessError).message);
     }
@@ -44,6 +47,7 @@ export struct SettingsPage {
         await this.preferencesStore.put('port', this.portInput);
         await this.preferencesStore.put('ip', '127.0.0.1');
         await this.preferencesStore.put('hideAtomicService', this.hideAtomicService);
+        await this.preferencesStore.put('skipAppIcon', this.skipAppIcon);
         await this.preferencesStore.flush();
         let context = getContext(this) as common.UIAbilityContext;
         this.saveStatus = await context.resourceManager.getStringValue($r('app.string.settings_save_success'));
@@ -111,6 +115,22 @@ export struct SettingsPage {
             .selectedColor($r('app.color.primary_color'))
             .onChange((isOn: boolean) => {
               this.hideAtomicService = isOn;
+              this.saveStatus = '';
+            })
+        }
+        .width('100%')
+        .height(50)
+
+        Row() {
+          Text($r('app.string.settings_skip_app_icon'))
+            .fontSize(16)
+            .fontWeight(FontWeight.Medium)
+            .fontColor($r('app.color.text_primary'))
+          Blank()
+          Toggle({ type: ToggleType.Switch, isOn: this.skipAppIcon })
+            .selectedColor($r('app.color.primary_color'))
+            .onChange((isOn: boolean) => {
+              this.skipAppIcon = isOn;
               this.saveStatus = '';
             })
         }

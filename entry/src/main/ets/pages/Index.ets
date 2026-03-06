@@ -41,6 +41,7 @@ export struct HomePage {
   @State appList: AppInfo[] = [];
   @State gridColumns: number = 1;
   @State hideAtomicService: boolean = true;
+  @State skipAppIcon: boolean = false;
   @State showAppActionDialog: boolean = false;
   @State selectedApp: AppInfo | null = null;
   
@@ -156,6 +157,7 @@ export struct HomePage {
       const savedPort = await this.preferencesStore.get('port', '');
       const savedIP = await this.preferencesStore.get('ip', '');
       const savedHideAtomic = await this.preferencesStore.get('hideAtomicService', true);
+      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', false);
 
       if (!savedPort || savedPort === '') {
         this.logService.appendLog('[Settings] Port not configured. Please go to Settings.');
@@ -167,6 +169,7 @@ export struct HomePage {
       this.defaultPort = savedPort as string;
       this.defaultIP = savedIP as string;
       this.hideAtomicService = savedHideAtomic as boolean;
+      this.skipAppIcon = savedSkipAppIcon as boolean;
       this.cmdInput = `tconn ${this.defaultIP}:${this.defaultPort}`;
 
       this.autoStartAndConnect();
@@ -509,7 +512,7 @@ export struct HomePage {
         return;
       }
       await new Promise<void>(resolve => setTimeout(resolve, 1000));
-      this.sendTcpCommand('get_bundle_info_no_icon', 'Refresh', (jsonData: string) => {
+      this.sendTcpCommand('get_bundle_info_no_icon', 'Refresh', async (jsonData: string) => {
         try {
           const appData = JSON.parse(jsonData) as AppDataResponse[];
           let filteredData = appData;
@@ -525,7 +528,14 @@ export struct HomePage {
             isGame: false
           }));
           this.logService.appendLog(`[Refresh] Successfully loaded ${this.appList.length} apps`);
-          this.fetchAppIcons(filteredData);
+          if (!this.skipAppIcon) {
+            this.fetchAppIcons(filteredData);
+          } else {
+            this.logService.appendLog('[Refresh] Skipping app icon fetch (disabled in settings)');
+            await this.saveAppListToCache();
+            await this.refreshGameStatus();
+            this.pullUpApp();
+          }
         } catch (parseError) {
           this.logService.appendLog(`[Refresh] Failed to parse app data: ${(parseError as Error).message}`);
           this.stopContinuousTask();

@@ -109,6 +109,10 @@
       "value": "隐藏原子服务包"
     },
     {
+      "name": "settings_skip_app_icon",
+      "value": "获取应用列表时不获取图标"
+    },
+    {
       "name": "settings_save_button",
       "value": "保存设置"
     },
