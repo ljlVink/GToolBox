@@ -247,12 +247,16 @@ export struct HomePage {
             .fontWeight(FontWeight.Bold)
             .fontColor($r('app.color.text_primary'))
           Blank()
-          TextInput({ placeholder: '搜索...', text: this.searchKeyword })
+          Search({ value: this.searchKeyword, placeholder: '搜索...' })
             .width(200)
             .height(36)
-            .fontSize(14)
-            .borderRadius(18)
             .backgroundColor($r('app.color.card_background'))
+            .cancelButton({
+              style: CancelButtonStyle.INPUT,
+              icon: {
+                src: $r('sys.media.ohos_ic_public_cancel_filled')
+              }
+            })
             .onChange((value: string) => {
               this.searchKeyword = value;
             })
