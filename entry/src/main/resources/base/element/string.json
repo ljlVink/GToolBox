@@ -267,6 +267,10 @@
     {
       "name": "clear_data_failed",
       "value": "Failed to clear data for \"{0}\": {1}"
+    },
+    {
+      "name": "fault_logs_title",
+      "value": "Fault Logs"
     }
   ]
 }

@@ -1,8 +1,8 @@
 import { HomePage } from './Index';
 import { SettingsPage } from './Settings';
-import { LogPage } from './LogPage';
 import { DevicePage } from './Device';
 import { TerminalPage } from './TerminalPage';
+import { FaultLogPage } from './FaultLogPage';
 
 @Entry
 @Component
@@ -56,10 +56,10 @@ struct MainPage {
 
       TabContent() {
         if (this.loadedTabs[3]) {
-          LogPage()
+          FaultLogPage()
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.logs_title'), 3, $r('app.media.doc_plaintext'), $r('app.media.doc_plaintext')))
+      .tabBar(this.TabBuilder($r('app.string.fault_logs_title'), 3, $r('app.media.power'), $r('app.media.power')))
 
       TabContent() {
         if (this.loadedTabs[4]) {

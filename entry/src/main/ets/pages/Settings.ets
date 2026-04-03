@@ -2,6 +2,7 @@ import { preferences } from '@kit.ArkData';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
 import { fileIo as fs } from '@kit.CoreFileKit';
+import { LogService } from '../utils/LogService';
 
 @Component
 export struct SettingsPage {
@@ -10,10 +11,22 @@ export struct SettingsPage {
   @State hideAtomicService: boolean = true;
   @State skipAppIcon: boolean = true;
   @State deleteKeyStatus: string = '';
+  @State showLogPage: boolean = false;
+  @State logText: string = '';
   private preferencesStore: preferences.Preferences | null = null;
+  private logService: LogService = LogService.getInstance();
+  private logUpdateListener = (logs: string) => {
+    this.logText = logs;
+  };
 
   async aboutToAppear() {
     await this.loadSettings();
+    this.logText = this.logService.getLogs();
+    this.logService.addListener(this.logUpdateListener);
+  }
+
+  aboutToDisappear() {
+    this.logService.removeListener(this.logUpdateListener);
   }
 
   async loadSettings() {
@@ -102,8 +115,30 @@ export struct SettingsPage {
     }
   }
 
-  build() {
+  @Builder
+  LogCoverBuilder() {
+    Column() {
 
+      Scroll() {
+        Text(this.logText)
+          .fontSize(14)
+          .fontColor($r('app.color.text_primary'))
+          .padding(10)
+          .backgroundColor($r('app.color.log_background'))
+          .width('100%')
+      }
+      .layoutWeight(1)
+      .width('90%')
+      .align(Alignment.TopStart)
+      .border({ width: 1, color: $r('app.color.border_color'), radius: 8 })
+    }
+    .width('100%')
+    .height('100%')
+    .backgroundColor($r('app.color.page_background'))
+    .padding({ top: 50 })
+  }
+
+  build() {
     Column() {
       Row() {
         Text($r('app.string.settings_title'))
@@ -115,158 +150,181 @@ export struct SettingsPage {
       .width('90%')
       .margin({ top: 20, bottom: 20 })
       Column({ space: 20 }) {
-        Column({ space: 8 }) {
-          Text($r('app.string.settings_port_label'))
-            .fontSize(16)
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('app.color.text_primary'))
-            .alignSelf(ItemAlign.Start)
+          Column({ space: 8 }) {
+            Text($r('app.string.settings_port_label'))
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_primary'))
+              .alignSelf(ItemAlign.Start)
 
-          TextInput({ text: this.portInput, placeholder: $r('app.string.settings_port_placeholder') })
-            .width('100%')
-            .height(50)
-            .fontSize(16)
-            .type(InputType.Number)
-            .onChange((value: string) => {
-              this.portInput = value;
-              this.saveStatus = '';
-            })
-        }
-        .width('100%')
-        .alignItems(HorizontalAlign.Start)
-        Row() {
-          Text($r('app.string.settings_hide_atomic_service'))
-            .fontSize(16)
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('app.color.text_primary'))
-          Blank()
-          Toggle({ type: ToggleType.Switch, isOn: this.hideAtomicService })
-            .selectedColor($r('app.color.primary_color'))
-            .onChange((isOn: boolean) => {
-              this.hideAtomicService = isOn;
-              this.saveStatus = '';
-            })
-        }
-        .width('100%')
-        .height(50)
-
-        Row() {
-          Text($r('app.string.settings_skip_app_icon'))
-            .fontSize(16)
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('app.color.text_primary'))
-          Blank()
-          Toggle({ type: ToggleType.Switch, isOn: this.skipAppIcon })
-            .selectedColor($r('app.color.primary_color'))
-            .onChange((isOn: boolean) => {
-              this.skipAppIcon = isOn;
-              this.saveStatus = '';
-            })
-        }
-        .width('100%')
-        .height(50)
-
-        Button($r('app.string.settings_save_button'))
-          .width('100%')
-          .height(50)
-          .fontSize(18)
-          .backgroundColor($r('app.color.primary_color'))
-          .onClick(() => {
-            this.saveSettings();
-          })
-
-        if (this.saveStatus !== '') {
-          Text(String(this.saveStatus))
-            .fontSize(14)
-            .fontColor(this.saveStatus.includes('success') ? $r('app.color.success_color') : $r('app.color.error_color'))
-            .margin({ top: 10 })
-        }
-        
-        Button($r('app.string.delete_key_button'))
-          .width('100%')
-          .height(50)
-          .fontSize(18)
-          .backgroundColor($r('app.color.error_color'))
-          .onClick(async () => {
-            let context = getContext(this) as common.UIAbilityContext;
-            let confirmTitle = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_title'));
-            let confirmMsg = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_message'));
-            let confirmBtn = await context.resourceManager.getStringValue($r('app.string.refresh_dialog_confirm'));
-            let cancelBtn = await context.resourceManager.getStringValue($r('app.string.cancel'));
-
-            AlertDialog.show({
-              title: confirmTitle,
-              message: confirmMsg,
-              autoCancel: true,
-              alignment: DialogAlignment.Center,
-              primaryButton: {
-                value: cancelBtn,
-                action: () => {
-                  // 取消操作
-                }
-              },
-              secondaryButton: {
-                value: confirmBtn,
-                fontColor: $r('app.color.error_color'),
-                action: () => {
-                  this.deleteHdcKeys();
-                }
-              }
-            });
-          })
-
-        if (this.deleteKeyStatus !== '') {
-          Text(String(this.deleteKeyStatus))
-            .fontSize(14)
-            .fontColor(this.deleteKeyStatus.includes('success') || this.deleteKeyStatus.includes('成功') ?
-              $r('app.color.success_color') : $r('app.color.error_color'))
-            .margin({ top: 5 })
-        }
-        
-
-        Column({ space: 12 }) {
-          Divider()
-            .margin({ top: 20, bottom: 10 })
-
-          Text('Gtoolbox')
-            .fontSize(18)
-            .fontWeight(FontWeight.Bold)
-            .fontColor($r('app.color.text_primary'))
-            .alignSelf(ItemAlign.Start)
-
-          Row() {
-            Text('GitHub')
-              .fontSize(14)
-              .fontColor($r('app.color.primary_color'))
-              .decoration({ type: TextDecorationType.Underline })
-              .onClick(() => {
-                this.openGithubLink();
+            TextInput({ text: this.portInput, placeholder: $r('app.string.settings_port_placeholder') })
+              .width('100%')
+              .height(50)
+              .fontSize(16)
+              .type(InputType.Number)
+              .onChange((value: string) => {
+                this.portInput = value;
+                this.saveStatus = '';
               })
           }
-          .alignSelf(ItemAlign.Start)
+          .width('100%')
+          .alignItems(HorizontalAlign.Start)
+          Row() {
+            Text($r('app.string.settings_hide_atomic_service'))
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_primary'))
+            Blank()
+            Toggle({ type: ToggleType.Switch, isOn: this.hideAtomicService })
+              .selectedColor($r('app.color.primary_color'))
+              .onChange((isOn: boolean) => {
+                this.hideAtomicService = isOn;
+                this.saveStatus = '';
+              })
+          }
+          .width('100%')
+          .height(50)
 
-          Text('GToolBox是免费开源软件，如果你付费购买请立即退款并问候其家人')
-            .fontSize(14)
-            .fontColor($r('app.color.text_secondary'))
-            .lineHeight(22)
-            .textAlign(TextAlign.Start)
+          Row() {
+            Text($r('app.string.settings_skip_app_icon'))
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_primary'))
+            Blank()
+            Toggle({ type: ToggleType.Switch, isOn: this.skipAppIcon })
+              .selectedColor($r('app.color.primary_color'))
+              .onChange((isOn: boolean) => {
+                this.skipAppIcon = isOn;
+                this.saveStatus = '';
+              })
+          }
+          .width('100%')
+          .height(50)
+
+          Button($r('app.string.settings_save_button'))
             .width('100%')
-          Text('GToolBox is free and open-source software. If you paid for it, please refund immediately and greet their family members.')
-            .fontSize(14)
-            .fontColor($r('app.color.text_secondary'))
-            .lineHeight(22)
-            .textAlign(TextAlign.Start)
+            .height(50)
+            .fontSize(18)
+            .backgroundColor($r('app.color.primary_color'))
+            .onClick(() => {
+              this.saveSettings();
+            })
+
+          if (this.saveStatus !== '') {
+            Text(String(this.saveStatus))
+              .fontSize(14)
+              .fontColor(this.saveStatus.includes('success') ? $r('app.color.success_color') : $r('app.color.error_color'))
+              .margin({ top: 10 })
+          }
+
+          Button($r('app.string.delete_key_button'))
             .width('100%')
+            .height(50)
+            .fontSize(18)
+            .backgroundColor($r('app.color.error_color'))
+            .onClick(async () => {
+              let context = getContext(this) as common.UIAbilityContext;
+              let confirmTitle = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_title'));
+              let confirmMsg = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_message'));
+              let confirmBtn = await context.resourceManager.getStringValue($r('app.string.refresh_dialog_confirm'));
+              let cancelBtn = await context.resourceManager.getStringValue($r('app.string.cancel'));
+
+              AlertDialog.show({
+                title: confirmTitle,
+                message: confirmMsg,
+                autoCancel: true,
+                alignment: DialogAlignment.Center,
+                primaryButton: {
+                  value: cancelBtn,
+                  action: () => {
+                    // 取消操作
+                  }
+                },
+                secondaryButton: {
+                  value: confirmBtn,
+                  fontColor: $r('app.color.error_color'),
+                  action: () => {
+                    this.deleteHdcKeys();
+                  }
+                }
+              });
+            })
+
+          if (this.deleteKeyStatus !== '') {
+            Text(String(this.deleteKeyStatus))
+              .fontSize(14)
+              .fontColor(this.deleteKeyStatus.includes('success') || this.deleteKeyStatus.includes('成功') ?
+                $r('app.color.success_color') : $r('app.color.error_color'))
+              .margin({ top: 5 })
+          }
+
+          Row() {
+            Image($r('app.media.doc_plaintext'))
+              .width(20)
+              .height(20)
+              .fillColor($r('app.color.text_primary'))
+            Text($r('app.string.logs_title'))
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_primary'))
+              .margin({ left: 12 })
+            Blank()
+            Text('›')
+              .fontSize(22)
+              .fontColor($r('app.color.text_tertiary'))
+          }
+          .width('100%')
+          .height(50)
+          .onClick(() => {
+            this.showLogPage = true;
+          })
+
+          Column({ space: 12 }) {
+            Divider()
+              .margin({ top: 20, bottom: 10 })
+
+            Text('Gtoolbox')
+              .fontSize(18)
+              .fontWeight(FontWeight.Bold)
+              .fontColor($r('app.color.text_primary'))
+              .alignSelf(ItemAlign.Start)
+
+            Row() {
+              Text('GitHub')
+                .fontSize(14)
+                .fontColor($r('app.color.primary_color'))
+                .decoration({ type: TextDecorationType.Underline })
+                .onClick(() => {
+                  this.openGithubLink();
+                })
+            }
+            .alignSelf(ItemAlign.Start)
+
+            Text('GToolBox是免费开源软件，如果你付费购买请立即退款并问候其家人')
+              .fontSize(14)
+              .fontColor($r('app.color.text_secondary'))
+              .lineHeight(22)
+              .textAlign(TextAlign.Start)
+              .width('100%')
+            Text('GToolBox is free and open-source software. If you paid for it, please refund immediately and greet their family members.')
+              .fontSize(14)
+              .fontColor($r('app.color.text_secondary'))
+              .lineHeight(22)
+              .textAlign(TextAlign.Start)
+              .width('100%')
+          }
+          .width('100%')
+          .alignItems(HorizontalAlign.Start)
+
         }
-        .width('100%')
-        .alignItems(HorizontalAlign.Start)
-
+        .width('90%')
+        .margin({ top: 20 })
       }
-      .width('90%')
-      .margin({ top: 20 })
-    }
-    .width('100%')
-    .height('100%')
-    .backgroundColor($r('app.color.page_background'))
+      .width('100%')
+      .height('100%')
+      .backgroundColor($r('app.color.page_background'))
+      .bindContentCover($$this.showLogPage, this.LogCoverBuilder(), {
+        modalTransition: ModalTransition.DEFAULT
+      })
   }
 }

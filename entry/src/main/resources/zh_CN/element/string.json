@@ -255,6 +255,10 @@
     {
       "name": "clear_data_failed",
       "value": "清除 \"{0}\" 的数据失败: {1}"
+    },
+    {
+      "name": "fault_logs_title",
+      "value": "APP崩溃日志"
     }
   ]
 }
