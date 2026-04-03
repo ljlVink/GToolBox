@@ -1,6 +1,7 @@
 import { preferences } from '@kit.ArkData';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
+import { fileIo as fs } from '@kit.CoreFileKit';
 
 @Component
 export struct SettingsPage {
@@ -8,6 +9,7 @@ export struct SettingsPage {
   @State saveStatus: string = '';
   @State hideAtomicService: boolean = true;
   @State skipAppIcon: boolean = true;
+  @State deleteKeyStatus: string = '';
   private preferencesStore: preferences.Preferences | null = null;
 
   async aboutToAppear() {
@@ -70,6 +72,33 @@ export struct SettingsPage {
       context.openLink(link, openLinkOptions)
     } catch (e) {
 
+    }
+  }
+  private async tryDeleteFile(path: string): Promise<boolean> {
+    try {
+      await fs.unlink(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async deleteHdcKeys() {
+    const keyPath = '/data/storage/el2/base/haps/entry/files/hdckey';
+    const pubKeyPath = '/data/storage/el2/base/haps/entry/files/hdckey.pub';
+    const context = getContext(this) as common.UIAbilityContext;
+    try {
+      const results = await Promise.all([
+        this.tryDeleteFile(keyPath),
+        this.tryDeleteFile(pubKeyPath)
+      ]);
+      const strRes = (results[0] || results[1])
+        ? $r('app.string.delete_key_success')
+        : $r('app.string.delete_key_not_found');
+      this.deleteKeyStatus = await context.resourceManager.getStringValue(strRes);
+    } catch (error) {
+      const errorMsg = await context.resourceManager.getStringValue($r('app.string.delete_key_failed'));
+      this.deleteKeyStatus = errorMsg.replace('{0}', (error as BusinessError).message);
     }
   }
 
@@ -152,6 +181,65 @@ export struct SettingsPage {
             .fontColor(this.saveStatus.includes('success') ? $r('app.color.success_color') : $r('app.color.error_color'))
             .margin({ top: 10 })
         }
+
+        Divider()
+          .margin({ top: 10, bottom: 10 })
+
+        Column({ space: 8 }) {
+          Text($r('app.string.delete_key_label'))
+            .fontSize(16)
+            .fontWeight(FontWeight.Medium)
+            .fontColor($r('app.color.text_primary'))
+            .alignSelf(ItemAlign.Start)
+
+          Text($r('app.string.delete_key_desc'))
+            .fontSize(12)
+            .fontColor($r('app.color.text_secondary'))
+            .alignSelf(ItemAlign.Start)
+
+          Button($r('app.string.delete_key_button'))
+            .width('100%')
+            .height(45)
+            .fontSize(16)
+            .backgroundColor($r('app.color.error_color'))
+            .onClick(async () => {
+              let context = getContext(this) as common.UIAbilityContext;
+              let confirmTitle = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_title'));
+              let confirmMsg = await context.resourceManager.getStringValue($r('app.string.delete_key_confirm_message'));
+              let confirmBtn = await context.resourceManager.getStringValue($r('app.string.refresh_dialog_confirm'));
+              let cancelBtn = await context.resourceManager.getStringValue($r('app.string.cancel'));
+
+              AlertDialog.show({
+                title: confirmTitle,
+                message: confirmMsg,
+                autoCancel: true,
+                alignment: DialogAlignment.Center,
+                primaryButton: {
+                  value: cancelBtn,
+                  action: () => {
+                    // 取消操作
+                  }
+                },
+                secondaryButton: {
+                  value: confirmBtn,
+                  fontColor: $r('app.color.error_color'),
+                  action: () => {
+                    this.deleteHdcKeys();
+                  }
+                }
+              });
+            })
+
+          if (this.deleteKeyStatus !== '') {
+            Text(String(this.deleteKeyStatus))
+              .fontSize(14)
+              .fontColor(this.deleteKeyStatus.includes('success') || this.deleteKeyStatus.includes('成功') ?
+                $r('app.color.success_color') : $r('app.color.error_color'))
+              .margin({ top: 5 })
+          }
+        }
+        .width('100%')
+        .alignItems(HorizontalAlign.Start)
 
         Column({ space: 12 }) {
           Divider()

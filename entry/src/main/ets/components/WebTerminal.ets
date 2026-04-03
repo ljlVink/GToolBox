@@ -29,6 +29,7 @@ export default struct WebTerminal {
   @State showVirtKey: boolean = true
   webviewController: WebviewController = new webview.WebviewController()
   resizeTimeout?: number = undefined
+  private isShellRunning: boolean = false
 
   @Builder
   contextMenu(webController: WebviewController) {
@@ -243,12 +244,32 @@ export default struct WebTerminal {
       }
     }
 
-    // For libhdc_napi, sendInput takes a string directly
-    napi.sendInput(data)
+    // Check if shell session is running before sending input
+    if (!this.isShellRunning) {
+      hilog.warn(DOMAIN, 'WebTerminal', 'Shell session is not running, attempting to start...');
+      this.isShellRunning = napi.startShell();
+      if (!this.isShellRunning) {
+        hilog.error(DOMAIN, 'WebTerminal', 'Failed to start shell session');
+        return;
+      }
+    }
+
+    try {
+      napi.sendInput(data);
+    } catch (e) {
+      hilog.error(DOMAIN, 'WebTerminal', 'sendInput failed: %{public}s', JSON.stringify(e));
+      // Shell may have stopped unexpectedly, reset state
+      this.isShellRunning = false;
+    }
   }
 
   async load(): Promise<void> {
     this.webviewController.runJavaScript('exports.setFocused(true)')
+    // Start shell session and register data callback
+    this.isShellRunning = napi.startShell();
+    if (!this.isShellRunning) {
+      hilog.error(DOMAIN, 'WebTerminal', 'Failed to start shell session on load');
+    }
     // For libhdc_napi, onData callback receives string
     napi.onData((data: string) => this.onData(data))
   }

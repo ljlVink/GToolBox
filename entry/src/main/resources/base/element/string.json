@@ -183,6 +183,38 @@
     {
       "name": "select_hap_file",
       "value": "Select HAP File"
+    },
+    {
+      "name": "delete_key_label",
+      "value": "Delete HDC Key"
+    },
+    {
+      "name": "delete_key_desc",
+      "value": "Delete HDC authentication key files when connection issues occur"
+    },
+    {
+      "name": "delete_key_button",
+      "value": "Delete HDC Key"
+    },
+    {
+      "name": "delete_key_confirm_title",
+      "value": "Confirm Delete"
+    },
+    {
+      "name": "delete_key_confirm_message",
+      "value": "Are you sure you want to delete HDC key files? You will need to re-authorize HDC connection after deletion."
+    },
+    {
+      "name": "delete_key_success",
+      "value": "HDC key files deleted successfully"
+    },
+    {
+      "name": "delete_key_not_found",
+      "value": "HDC key files not found"
+    },
+    {
+      "name": "delete_key_failed",
+      "value": "Failed to delete HDC key: {0}"
     }
   ]
 }
