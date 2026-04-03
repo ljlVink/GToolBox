@@ -1,5 +1,5 @@
 import { common, Want, wantAgent, WantAgent } from '@kit.AbilityKit';
-import { BusinessError } from '@kit.BasicServicesKit';
+import { BusinessError, deviceInfo } from '@kit.BasicServicesKit';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { socket } from '@kit.NetworkKit';
 import { preferences } from '@kit.ArkData';
@@ -663,23 +663,25 @@ export struct HomePage {
           })
           Divider()
             .color($r('app.color.divider_color'))
-          Button() {
-            Row() {
-              Text(this.selectedApp?.isGame ? $r('app.string.remove_from_game') : $r('app.string.set_game'))
-                .fontSize(16)
-                .fontColor($r('app.color.text_primary'))
+          if (deviceInfo.sdkApiVersion < 23) {
+            Button() {
+              Row() {
+                Text(this.selectedApp?.isGame ? $r('app.string.remove_from_game') : $r('app.string.set_game'))
+                  .fontSize(16)
+                  .fontColor($r('app.color.text_primary'))
+              }
+              .width('100%')
+              .justifyContent(FlexAlign.Center)
             }
             .width('100%')
-            .justifyContent(FlexAlign.Center)
+            .height(50)
+            .backgroundColor(Color.Transparent)
+            .onClick(() => {
+              this.toggleGameStatus();
+            })
+            Divider()
+              .color($r('app.color.divider_color'))
           }
-          .width('100%')
-          .height(50)
-          .backgroundColor(Color.Transparent)
-          .onClick(() => {
-            this.toggleGameStatus();
-          })
-          Divider()
-            .color($r('app.color.divider_color'))
           Button() {
             Row() {
               Text($r('app.string.cancel'))

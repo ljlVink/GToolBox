@@ -173,14 +173,6 @@
       "value": "选择 HAP 文件"
     },
     {
-      "name": "delete_key_label",
-      "value": "删除 HDC 密钥"
-    },
-    {
-      "name": "delete_key_desc",
-      "value": "当出现连接问题时，删除 HDC 认证密钥文件"
-    },
-    {
       "name": "delete_key_button",
       "value": "删除 HDC 密钥"
     },

@@ -185,14 +185,6 @@
       "value": "Select HAP File"
     },
     {
-      "name": "delete_key_label",
-      "value": "Delete HDC Key"
-    },
-    {
-      "name": "delete_key_desc",
-      "value": "Delete HDC authentication key files when connection issues occur"
-    },
-    {
       "name": "delete_key_button",
       "value": "Delete HDC Key"
     },
