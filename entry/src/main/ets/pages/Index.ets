@@ -41,13 +41,24 @@ export struct HomePage {
   @State appList: AppInfo[] = [];
   @State gridColumns: number = 1;
   @State hideAtomicService: boolean = true;
-  @State skipAppIcon: boolean = false;
+  @State skipAppIcon: boolean = true;
   @State showAppActionDialog: boolean = false;
   @State selectedApp: AppInfo | null = null;
+  @State searchKeyword: string = '';
   
-  // Helper method to safely convert connectStatus to string
   private getConnectStatusString(): string {
     return String(this.connectStatus || '');
+  }
+
+  private getFilteredAppList(): AppInfo[] {
+    if (!this.searchKeyword || this.searchKeyword.trim() === '') {
+      return this.appList;
+    }
+    const keyword = this.searchKeyword.toLowerCase().trim();
+    return this.appList.filter((app: AppInfo) => {
+      return app.appName.toLowerCase().includes(keyword) ||
+             app.bundleName.toLowerCase().includes(keyword);
+    });
   }
   private workPath: string = '';
   private defaultPort: string = '5555';
@@ -157,7 +168,7 @@ export struct HomePage {
       const savedPort = await this.preferencesStore.get('port', '');
       const savedIP = await this.preferencesStore.get('ip', '');
       const savedHideAtomic = await this.preferencesStore.get('hideAtomicService', true);
-      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', false);
+      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', true);
 
       if (!savedPort || savedPort === '') {
         this.logService.appendLog('[Settings] Port not configured. Please go to Settings.');
@@ -236,6 +247,15 @@ export struct HomePage {
             .fontWeight(FontWeight.Bold)
             .fontColor($r('app.color.text_primary'))
           Blank()
+          TextInput({ placeholder: '搜索...', text: this.searchKeyword })
+            .width(200)
+            .height(36)
+            .fontSize(14)
+            .borderRadius(18)
+            .backgroundColor($r('app.color.card_background'))
+            .onChange((value: string) => {
+              this.searchKeyword = value;
+            })
           Button({ type: ButtonType.Circle }) {
             Image($r('app.media.arrow_clockwise'))
               .width(24)
@@ -245,6 +265,7 @@ export struct HomePage {
           .width(40)
           .height(40)
           .backgroundColor(Color.Transparent)
+          .margin({ left: 8 })
           .onClick(() => {
             this.showRefreshConfirmDialog();
           })
@@ -268,7 +289,7 @@ export struct HomePage {
         }
         .margin({ bottom: 10 })
         Grid() {
-          ForEach(this.appList, (item: AppInfo, index: number) => {
+          ForEach(this.getFilteredAppList(), (item: AppInfo, index: number) => {
             GridItem() {
               Row() {
                 Image(typeof item.icon === 'string' ? item.icon : item.icon)

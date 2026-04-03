@@ -7,7 +7,7 @@ export struct SettingsPage {
   @State portInput: string = '5555';
   @State saveStatus: string = '';
   @State hideAtomicService: boolean = true;
-  @State skipAppIcon: boolean = false;
+  @State skipAppIcon: boolean = true;
   private preferencesStore: preferences.Preferences | null = null;
 
   async aboutToAppear() {
@@ -20,7 +20,7 @@ export struct SettingsPage {
       this.preferencesStore = await preferences.getPreferences(context, 'hdc_settings');
       const savedPort = await this.preferencesStore.get('port', '5555');
       const savedHideAtomic = await this.preferencesStore.get('hideAtomicService', true);
-      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', false);
+      const savedSkipAppIcon = await this.preferencesStore.get('skipAppIcon', true);
       this.portInput = savedPort as string;
       this.hideAtomicService = savedHideAtomic as boolean;
       this.skipAppIcon = savedSkipAppIcon as boolean;
