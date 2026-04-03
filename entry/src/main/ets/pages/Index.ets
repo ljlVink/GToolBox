@@ -45,6 +45,9 @@ export struct HomePage {
   @State showAppActionDialog: boolean = false;
   @State selectedApp: AppInfo | null = null;
   @State searchKeyword: string = '';
+  @State showUninstallConfirmDialog: boolean = false;
+  @State showCleanConfirmDialog: boolean = false;
+  @State cleanType: 'cache' | 'data' = 'cache';
   
   private getConnectStatusString(): string {
     return String(this.connectStatus || '');
@@ -373,6 +376,29 @@ export struct HomePage {
 
         this.AppActionDialog()
       }
+      if (this.showUninstallConfirmDialog && this.selectedApp !== null) {
+        Column()
+          .width('100%')
+          .height('100%')
+          .backgroundColor('rgba(0, 0, 0, 0.5)')
+          .hitTestBehavior(HitTestMode.Block)
+          .onClick(() => {
+            this.showUninstallConfirmDialog = false;
+          })
+        this.AppConfirmDialog('uninstall')
+      }
+
+      if (this.showCleanConfirmDialog && this.selectedApp !== null) {
+        Column()
+          .width('100%')
+          .height('100%')
+          .backgroundColor('rgba(0, 0, 0, 0.5)')
+          .hitTestBehavior(HitTestMode.Block)
+          .onClick(() => {
+            this.showCleanConfirmDialog = false;
+          })
+        this.AppConfirmDialog(this.cleanType)
+      }
     }
     .width('100%')
     .height('100%')
@@ -667,6 +693,62 @@ export struct HomePage {
           })
           Divider()
             .color($r('app.color.divider_color'))
+          Button() {
+            Row() {
+              Text($r('app.string.uninstall_app'))
+                .fontSize(16)
+                .fontColor($r('app.color.error_color'))
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+          }
+          .width('100%')
+          .height(50)
+          .backgroundColor(Color.Transparent)
+          .onClick(() => {
+            this.showAppActionDialog = false;
+            this.showUninstallConfirmDialog = true;
+          })
+          Divider()
+            .color($r('app.color.divider_color'))
+          Button() {
+            Row() {
+              Text($r('app.string.clear_cache'))
+                .fontSize(16)
+                .fontColor($r('app.color.text_primary'))
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+          }
+          .width('100%')
+          .height(50)
+          .backgroundColor(Color.Transparent)
+          .onClick(() => {
+            this.cleanType = 'cache';
+            this.showAppActionDialog = false;
+            this.showCleanConfirmDialog = true;
+          })
+          Divider()
+            .color($r('app.color.divider_color'))
+          Button() {
+            Row() {
+              Text($r('app.string.clear_data'))
+                .fontSize(16)
+                .fontColor($r('app.color.error_color'))
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+          }
+          .width('100%')
+          .height(50)
+          .backgroundColor(Color.Transparent)
+          .onClick(() => {
+            this.cleanType = 'data';
+            this.showAppActionDialog = false;
+            this.showCleanConfirmDialog = true;
+          })
+          Divider()
+            .color($r('app.color.divider_color'))
           if (deviceInfo.sdkApiVersion < 23) {
             Button() {
               Row() {
@@ -766,8 +848,8 @@ export struct HomePage {
         });
         this.appList = [...updatedList];
         await this.saveAppListToCache();
-        const successMsg = newGameStatus ? 
-          await context.resourceManager.getStringValue($r('app.string.game_set_success')) : 
+        const successMsg = newGameStatus ?
+          await context.resourceManager.getStringValue($r('app.string.game_set_success')) :
           await context.resourceManager.getStringValue($r('app.string.game_remove_success'));
         promptAction.showToast({
           message: successMsg.replace('{0}', appName),
@@ -787,6 +869,129 @@ export struct HomePage {
         message: await context.resourceManager.getStringValue($r('app.string.game_status_update_error')),
         duration: 2000
       });
+    }
+    this.selectedApp = null;
+  }
+
+  @Builder
+  AppConfirmDialog(type: 'uninstall' | 'cache' | 'data') {
+    Column() {
+      Text(type === 'uninstall'
+        ? $r('app.string.confirm_uninstall_title')
+        : (type === 'cache' ? $r('app.string.confirm_clear_cache_title') : $r('app.string.confirm_clear_data_title')))
+        .fontSize(18)
+        .fontWeight(FontWeight.Bold)
+        .fontColor($r('app.color.text_primary'))
+        .margin({ top: 20, bottom: 12 })
+      Text(this.selectedApp?.appName || '')
+        .fontSize(14)
+        .fontColor($r('app.color.text_secondary'))
+        .margin({ bottom: 16 })
+      Divider()
+        .color($r('app.color.divider_color'))
+      Row() {
+        Button() {
+          Text($r('app.string.cancel'))
+            .fontSize(16)
+            .fontColor($r('app.color.text_secondary'))
+        }
+        .layoutWeight(1)
+        .height(50)
+        .backgroundColor(Color.Transparent)
+        .onClick(() => {
+          if (type === 'uninstall') {
+            this.showUninstallConfirmDialog = false;
+          } else {
+            this.showCleanConfirmDialog = false;
+          }
+        })
+        Divider()
+          .color($r('app.color.divider_color'))
+          .vertical(true)
+          .height(30)
+        Button() {
+          Text(type === 'uninstall'
+            ? $r('app.string.uninstall_app')
+            : (type === 'cache' ? $r('app.string.clear_cache') : $r('app.string.clear_data')))
+            .fontSize(16)
+            .fontColor($r('app.color.error_color'))
+        }
+        .layoutWeight(1)
+        .height(50)
+        .backgroundColor(Color.Transparent)
+        .onClick(() => {
+          this.executeAppAction(type);
+        })
+      }
+      .width('100%')
+      .height(50)
+    }
+    .width('80%')
+    .backgroundColor($r('app.color.card_background'))
+    .borderRadius(16)
+    .shadow({
+      radius: 24,
+      color: 'rgba(0, 0, 0, 0.15)',
+      offsetX: 0,
+      offsetY: 8
+    })
+  }
+
+  async executeAppAction(type: 'uninstall' | 'cache' | 'data') {
+    if (!this.selectedApp) {
+      this.logService.appendLog(`[${type}] No app selected`);
+      return;
+    }
+    const appName = this.selectedApp.appName;
+    const bundleName = this.selectedApp.bundleName;
+
+    if (type === 'uninstall') {
+      this.showUninstallConfirmDialog = false;
+    } else {
+      this.showCleanConfirmDialog = false;
+    }
+    this.showAppActionDialog = false;
+
+    const tag = type === 'uninstall' ? 'Uninstall' : (type === 'cache' ? 'ClearCache' : 'ClearData');
+    const command = type === 'uninstall'
+      ? `shell bm uninstall -n ${bundleName}`
+      : `shell bm clean --${type} -n ${bundleName}`;
+    const successKey = type === 'uninstall'
+      ? $r('app.string.uninstall_success')
+      : (type === 'cache' ? $r('app.string.clear_cache_success') : $r('app.string.clear_data_success'));
+    const failKey = type === 'uninstall'
+      ? $r('app.string.uninstall_failed')
+      : (type === 'cache' ? $r('app.string.clear_cache_failed') : $r('app.string.clear_data_failed'));
+
+    try {
+      const context = getContext(this) as common.UIAbilityContext;
+      this.logService.appendLog(`[${tag}] Executing on ${bundleName}...`);
+      const result = await this.hdcClient.executeCommand(command);
+      if (type !== 'uninstall') {
+        this.logService.appendLog(result);
+      }
+      const isSuccess = !result.includes('[fail]') && !result.includes('[Fail]') && !result.toLowerCase().includes('error');
+      if (isSuccess) {
+        if (type === 'uninstall') {
+          this.logService.appendLog(`[${tag}] Successfully uninstalled ${bundleName}`);
+          this.appList = this.appList.filter((app: AppInfo) => app.bundleName !== bundleName);
+          await this.saveAppListToCache();
+        } else {
+          this.logService.appendLog(`[${tag}] Success`);
+        }
+        const successMsg = await context.resourceManager.getStringValue(successKey);
+        promptAction.showToast({ message: successMsg.replace('{0}', appName), duration: 2000 });
+      } else {
+        this.logService.appendLog(`[${tag}] Failed: ${result}`);
+        const failMsg = await context.resourceManager.getStringValue(failKey);
+        promptAction.showToast({ message: failMsg.replace('{0}', appName).replace('{1}', result), duration: 2000 });
+      }
+    } catch (error) {
+      const context = getContext(this) as common.UIAbilityContext;
+      const errorMsg = (error as Error).message;
+      this.logService.appendLog(`[${tag}] Error: ${errorMsg}`);
+      const failMsg = await context.resourceManager.getStringValue(failKey);
+      promptAction.showToast({ message: failMsg.replace('{0}', appName).replace('{1}', errorMsg), duration: 2000 });
     }
     this.selectedApp = null;
   }

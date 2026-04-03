@@ -207,6 +207,66 @@
     {
       "name": "delete_key_failed",
       "value": "Failed to delete HDC key: {0}"
+    },
+    {
+      "name": "uninstall_app",
+      "value": "Uninstall App"
+    },
+    {
+      "name": "clear_cache",
+      "value": "Clear Cache"
+    },
+    {
+      "name": "clear_data",
+      "value": "Clear Data"
+    },
+    {
+      "name": "confirm_uninstall_title",
+      "value": "Confirm Uninstall"
+    },
+    {
+      "name": "confirm_uninstall_message",
+      "value": "Are you sure you want to uninstall \"{0}\"? This action cannot be undone."
+    },
+    {
+      "name": "confirm_clear_cache_title",
+      "value": "Confirm Clear Cache"
+    },
+    {
+      "name": "confirm_clear_cache_message",
+      "value": "Are you sure you want to clear cache for \"{0}\"?"
+    },
+    {
+      "name": "confirm_clear_data_title",
+      "value": "Confirm Clear Data"
+    },
+    {
+      "name": "confirm_clear_data_message",
+      "value": "Are you sure you want to clear all data for \"{0}\"? This will reset the app to its initial state."
+    },
+    {
+      "name": "uninstall_success",
+      "value": "\"{0}\" has been uninstalled successfully"
+    },
+    {
+      "name": "uninstall_failed",
+      "value": "Failed to uninstall \"{0}\": {1}"
+    },
+    {
+      "name": "clear_cache_success",
+      "value": "Cache cleared for \"{0}\""
+    },
+    {
+      "name": "clear_cache_failed",
+      "value": "Failed to clear cache for \"{0}\": {1}"
+    },
+    {
+      "name": "clear_data_success",
+      "value": "Data cleared for \"{0}\""
+    },
+    {
+      "name": "clear_data_failed",
+      "value": "Failed to clear data for \"{0}\": {1}"
     }
   ]
 }
