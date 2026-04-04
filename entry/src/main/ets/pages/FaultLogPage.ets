@@ -1,4 +1,5 @@
 import { HdcClient } from '../utils/HdcClient';
+import { router } from '@kit.ArkUI';
 
 interface FaultLogEntry {
   type: string;
@@ -351,6 +352,18 @@ export struct FaultLogPage {
                     .padding({ left: 14, right: 14, top: 10, bottom: 10 })
                     .backgroundColor($r('app.color.card_background'))
                     .border({ width: { top: 1 }, color: $r('app.color.page_background') })
+                    .onClick(() => {
+                      router.pushUrl({
+                        url: 'pages/FaultLogDetailPage',
+                        params: {
+                          logFileName: entry.raw,
+                          logType: entry.type,
+                          packageName: entry.packageName,
+                          dateTime: entry.dateTime,
+                          pid: entry.pid
+                        }
+                      });
+                    })
                   }, (entry: FaultLogEntry) => entry.raw)
                 }
                 .width('100%')
