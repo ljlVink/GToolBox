@@ -8,13 +8,21 @@ interface FaultLogEntry {
   raw: string;
 }
 
+interface AppGroup {
+  packageName: string;
+  entries: FaultLogEntry[];
+}
+
 @Component
 export struct FaultLogPage {
   @State isLoading: boolean = false;
-  @State filteredEntries: FaultLogEntry[] = [];
+  @State filteredGrouped: AppGroup[] = [];
+  @State filteredCount: number = 0;
   @State filterType: string = 'all';
   @State errorMsg: string = '';
   @State totalCount: number = 0;
+  @State expandedApps: string[] = [];
+  @State searchKeyword: string = '';
   private hdcClient: HdcClient = new HdcClient();
   private allEntries: FaultLogEntry[] = [];
 
@@ -59,7 +67,6 @@ export struct FaultLogPage {
           continue;
         }
         const rest = trimmed.substring(sepIdx1 + 1);
-        // last segment: datetime (14 digits), second-to-last: pid, rest: packageName
         const lastDash = rest.lastIndexOf('-');
         if (lastDash < 0) {
           continue;
@@ -89,10 +96,48 @@ export struct FaultLogPage {
     return entries;
   }
 
+  groupEntries(entries: FaultLogEntry[]): AppGroup[] {
+    const groups: AppGroup[] = [];
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      let found = false;
+      for (let j = 0; j < groups.length; j++) {
+        if (groups[j].packageName === entry.packageName) {
+          groups[j].entries.push(entry);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        groups.push({ packageName: entry.packageName, entries: [entry] });
+      }
+    }
+    return groups;
+  }
+
+  isExpanded(packageName: string): boolean {
+    return this.expandedApps.indexOf(packageName) >= 0;
+  }
+
+  toggleExpand(packageName: string) {
+    const idx = this.expandedApps.indexOf(packageName);
+    const newArr: string[] = [];
+    for (let i = 0; i < this.expandedApps.length; i++) {
+      newArr.push(this.expandedApps[i]);
+    }
+    if (idx >= 0) {
+      newArr.splice(idx, 1);
+    } else {
+      newArr.push(packageName);
+    }
+    this.expandedApps = newArr;
+  }
+
   applyFilter(type: string) {
     this.filterType = type;
+    let filtered: FaultLogEntry[];
     if (type === 'all') {
-      this.filteredEntries = this.allEntries.slice();
+      filtered = this.allEntries.slice();
     } else {
       const result: FaultLogEntry[] = [];
       for (let i = 0; i < this.allEntries.length; i++) {
@@ -100,8 +145,10 @@ export struct FaultLogPage {
           result.push(this.allEntries[i]);
         }
       }
-      this.filteredEntries = result;
+      filtered = result;
     }
+    this.filteredCount = filtered.length;
+    this.filteredGrouped = this.groupEntries(filtered);
   }
 
   async fetchFaultLogs() {
@@ -115,10 +162,25 @@ export struct FaultLogPage {
     } catch (error) {
       this.errorMsg = (error as Error).message;
       this.allEntries = [];
-      this.filteredEntries = [];
+      this.filteredGrouped = [];
+      this.filteredCount = 0;
       this.totalCount = 0;
     }
     this.isLoading = false;
+  }
+
+  getVisibleGroups(): AppGroup[] {
+    if (!this.searchKeyword || this.searchKeyword.trim() === '') {
+      return this.filteredGrouped;
+    }
+    const keyword = this.searchKeyword.toLowerCase().trim();
+    const result: AppGroup[] = [];
+    for (let i = 0; i < this.filteredGrouped.length; i++) {
+      if (this.filteredGrouped[i].packageName.toLowerCase().includes(keyword)) {
+        result.push(this.filteredGrouped[i]);
+      }
+    }
+    return result;
   }
 
   typeColor(type: string): string {
@@ -138,28 +200,37 @@ export struct FaultLogPage {
     Column() {
       // Header
       Row() {
-        Text($r('app.string.fault_logs_title'))
-          .fontSize(24)
-          .fontWeight(FontWeight.Bold)
-          .fontColor($r('app.color.text_primary'))
-
-        Blank()
+        Search({ value: this.searchKeyword, placeholder: '搜索...' })
+          .layoutWeight(1)
+          .height(36)
+          .backgroundColor($r('app.color.card_background'))
+          .cancelButton({
+            style: CancelButtonStyle.INPUT,
+            icon: {
+              src: $r('sys.media.ohos_ic_public_cancel_filled')
+            }
+          })
+          .onChange((value: string) => {
+            this.searchKeyword = value;
+          })
 
         if (this.isLoading) {
           LoadingProgress()
-            .width(28)
-            .height(28)
-            .color($r('app.color.primary_color'))
+            .width(40)
+            .height(40)
+            .color($r('app.color.icon_color'))
+            .margin({ left: 8 })
         } else {
           Button({ type: ButtonType.Circle }) {
             Image($r('app.media.arrow_clockwise'))
-              .width(20)
-              .height(20)
-              .fillColor($r('app.color.primary_color'))
+              .width(24)
+              .height(24)
+              .fillColor($r('app.color.icon_color'))
           }
-          .width(36)
-          .height(36)
-          .backgroundColor($r('app.color.card_background'))
+          .width(40)
+          .height(40)
+          .backgroundColor(Color.Transparent)
+          .margin({ left: 8 })
           .onClick(() => {
             this.fetchFaultLogs();
           })
@@ -191,7 +262,7 @@ export struct FaultLogPage {
 
       // Record count
       Row() {
-        Text(`${this.filteredEntries.length} records`)
+        Text(`${this.filteredCount} records · ${this.getVisibleGroups().length} apps`)
           .fontSize(12)
           .fontColor($r('app.color.text_tertiary'))
       }
@@ -210,47 +281,87 @@ export struct FaultLogPage {
           .margin({ bottom: 8 })
       }
 
-      // Log list
-      List({ space: 6 }) {
-        ForEach(this.filteredEntries, (entry: FaultLogEntry) => {
+      // Grouped log list
+      List({ space: 8 }) {
+        ForEach(this.getVisibleGroups(), (group: AppGroup) => {
           ListItem() {
-            Row({ space: 10 }) {
-              // Type badge
-              Text(entry.type)
-                .fontSize(10)
-                .fontColor('#FFFFFF')
-                .padding({ left: 6, right: 6, top: 3, bottom: 3 })
-                .backgroundColor(this.typeColor(entry.type))
-                .borderRadius(4)
+            Column() {
+              Row({ space: 8 }) {
+                Text('󰃙')  // this symbol is copied from https://developer.huawei.com/consumer/cn/design/harmonyos-symbol
+                  .fontSize(15)
+                  .fontColor($r('app.color.primary_color'))
+                  .rotate({ angle: this.isExpanded(group.packageName) ? 90 : 0 })
+                  .animation({ duration: 200 })
 
-              // Info
-              Column({ space: 4 }) {
-                Text(entry.packageName)
+                Text(group.packageName)
                   .fontSize(13)
+                  .fontWeight(FontWeight.Medium)
                   .fontColor($r('app.color.text_primary'))
+                  .layoutWeight(1)
                   .maxLines(1)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
-                  .width('100%')
 
-                Row({ space: 10 }) {
-                  Text(`PID: ${entry.pid}`)
-                    .fontSize(11)
-                    .fontColor($r('app.color.text_tertiary'))
-                  Text(entry.dateTime)
-                    .fontSize(11)
-                    .fontColor($r('app.color.text_secondary'))
-                }
+                Text(`${group.entries.length}`)
+                  .fontSize(11)
+                  .fontColor('#FFFFFF')
+                  .padding({ left: 7, right: 7, top: 2, bottom: 2 })
+                  .backgroundColor($r('app.color.primary_color'))
+                  .borderRadius(10)
               }
-              .layoutWeight(1)
-              .alignItems(HorizontalAlign.Start)
+              .width('100%')
+              .padding(14)
+              .backgroundColor($r('app.color.card_background'))
+              .borderRadius(
+                this.isExpanded(group.packageName)
+                  ? { topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0 }
+                  : { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 }
+              )
+              .onClick(() => {
+                this.toggleExpand(group.packageName);
+              })
+
+              // Expanded entries
+              if (this.isExpanded(group.packageName)) {
+                Column() {
+                  ForEach(group.entries, (entry: FaultLogEntry) => {
+                    Row({ space: 10 }) {
+                      // Type badge
+                      Text(entry.type)
+                        .fontSize(10)
+                        .fontColor('#FFFFFF')
+                        .padding({ left: 6, right: 6, top: 3, bottom: 3 })
+                        .backgroundColor(this.typeColor(entry.type))
+                        .borderRadius(4)
+
+                      // Info
+                      Column({ space: 2 }) {
+                        Row({ space: 10 }) {
+                          Text(`PID: ${entry.pid}`)
+                            .fontSize(11)
+                            .fontColor($r('app.color.text_tertiary'))
+                          Text(entry.dateTime)
+                            .fontSize(11)
+                            .fontColor($r('app.color.text_secondary'))
+                        }
+                      }
+                      .layoutWeight(1)
+                      .alignItems(HorizontalAlign.Start)
+                    }
+                    .width('100%')
+                    .padding({ left: 14, right: 14, top: 10, bottom: 10 })
+                    .backgroundColor($r('app.color.card_background'))
+                    .border({ width: { top: 1 }, color: $r('app.color.page_background') })
+                  }, (entry: FaultLogEntry) => entry.raw)
+                }
+                .width('100%')
+                .borderRadius({ topLeft: 0, topRight: 0, bottomLeft: 10, bottomRight: 10 })
+                .clip(true)
+              }
             }
             .width('100%')
-            .padding(12)
-            .backgroundColor($r('app.color.card_background'))
             .borderRadius(10)
-            .alignItems(VerticalAlign.Center)
           }
-        }, (entry: FaultLogEntry) => entry.raw)
+        }, (group: AppGroup) => group.packageName)
       }
       .layoutWeight(1)
       .width('90%')
