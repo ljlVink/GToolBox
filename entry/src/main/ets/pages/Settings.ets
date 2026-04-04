@@ -105,15 +105,6 @@ export struct SettingsPage {
 
   build() {
     Column() {
-      Row() {
-        Text($r('app.string.settings_title'))
-          .fontSize(24)
-          .fontWeight(FontWeight.Bold)
-          .fontColor($r('app.color.text_primary'))
-        Blank()
-      }
-      .width('90%')
-      .margin({ top: 20, bottom: 20 })
       Column({ space: 20 }) {
           Column({ space: 8 }) {
             Text($r('app.string.settings_port_label'))
