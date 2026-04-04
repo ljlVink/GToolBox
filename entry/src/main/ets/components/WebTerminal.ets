@@ -24,12 +24,12 @@ const VKeyRadius = 5;
 @Component
 export default struct WebTerminal {
   @Require virtKeyEnabled: boolean
+  @Prop isShellRunning: boolean = false
   @State ctrlPressed: boolean = false
   @State shiftPressed: boolean = false
   @State showVirtKey: boolean = true
   webviewController: WebviewController = new webview.WebviewController()
   resizeTimeout?: number = undefined
-  private isShellRunning: boolean = false
 
   @Builder
   contextMenu(webController: WebviewController) {
@@ -124,10 +124,11 @@ export default struct WebTerminal {
 
   build() {
     Column() {
-      Web({
-        src: $rawfile('term/term.html'),
-        controller: this.webviewController
-      })
+      Stack({ alignContent: Alignment.TopEnd }) {
+        Web({
+          src: $rawfile('term/term.html'),
+          controller: this.webviewController
+        })
         .javaScriptProxy({
           object: this,
           name: 'native',
@@ -147,9 +148,15 @@ export default struct WebTerminal {
           }
         }`
         })
-        .backgroundColor('#000')
-        .layoutWeight(1)
-        .bindContextMenu(this.contextMenu(this.webviewController), ResponseType.RightClick)
+          .backgroundColor('#000')
+          .layoutWeight(1)
+          .bindContextMenu(this.contextMenu(this.webviewController), ResponseType.RightClick)
+        Circle({ width: 8, height: 8 })
+          .fill(this.isShellRunning ? $r('app.color.success_color') : $r('app.color.error_color'))
+          .margin({ top: 8, right: 8 })
+      }
+      .layoutWeight(1)
+
       if (this.virtKeyEnabled) {
         if (this.showVirtKey) {
           this.buildVirtualKeys()
