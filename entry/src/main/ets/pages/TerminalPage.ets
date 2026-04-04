@@ -29,26 +29,7 @@ struct TerminalPage {
 
   build() {
     Column() {
-      Row() {
-        Text('HDC Shell')
-          .fontSize(20)
-          .fontWeight(FontWeight.Bold)
-          .fontColor($r('app.color.text_primary'))
-        
-        Blank()
-        
-        Row({ space: 8 }) {
-          Circle({ width: 8, height: 8 })
-            .fill(this.isShellRunning ? $r('app.color.success_color') : $r('app.color.error_color'))
-
-
-        }
-      }
-      .width('100%')
-      .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-      .backgroundColor($r('app.color.page_background'))
-
-      WebTerminal({ virtKeyEnabled: true })
+      WebTerminal({ virtKeyEnabled: true, isShellRunning: this.isShellRunning })
         .layoutWeight(1)
     }
     .width('100%')

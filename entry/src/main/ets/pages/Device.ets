@@ -119,156 +119,168 @@ export struct DevicePage {
     }
   }
 
+  @Builder
+  SectionHeader(title: string) {
+    Text(title)
+      .fontSize(13)
+      .fontColor($r('app.color.text_tertiary'))
+      .fontWeight(FontWeight.Medium)
+      .width('100%')
+      .padding({ left: 4, bottom: 6 })
+  }
+
+  @Builder
+  ActionRow(icon: Resource, label: Resource | string, iconBgColor: ResourceColor, onClick: () => void) {
+    Row() {
+      Row() {
+        Image(icon)
+          .width(18)
+          .height(18)
+          .fillColor(Color.White)
+      }
+      .width(32)
+      .height(32)
+      .borderRadius(8)
+      .backgroundColor(iconBgColor)
+      .justifyContent(FlexAlign.Center)
+
+      if (typeof label === 'string') {
+        Text(label)
+          .fontSize(16)
+          .fontColor($r('app.color.text_primary'))
+          .margin({ left: 14 })
+          .layoutWeight(1)
+      } else {
+        Text(label as Resource)
+          .fontSize(16)
+          .fontColor($r('app.color.text_primary'))
+          .margin({ left: 14 })
+          .layoutWeight(1)
+      }
+
+      Image($r('sys.media.ohos_ic_public_arrow_right'))
+        .width(16)
+        .height(16)
+        .fillColor($r('app.color.text_tertiary'))
+    }
+    .width('100%')
+    .height(52)
+    .padding({ left: 14, right: 14 })
+    .onClick(onClick)
+  }
+
   build() {
     Column() {
+      // Page Title
       Row() {
         Text($r('app.string.device_title'))
           .fontSize(24)
           .fontWeight(FontWeight.Bold)
           .fontColor($r('app.color.text_primary'))
-        Blank()
       }
-      .width('90%')
-      .margin({ top: 20, bottom: 20 })
+      .width('100%')
+      .padding({ left: 20, right: 20, top: 20, bottom: 8 })
 
-      Column({ space: 20 }) {
-        Button() {
-          Row({ space: 12 }) {
-            if (this.isInstalling) {
-              LoadingProgress()
-                .width(24)
-                .height(24)
-                .color($r('app.color.button_text'))
-            } else {
-              Image($r('app.media.install_hap'))
-                .width(24)
-                .height(24)
-                .fillColor($r('app.color.button_text'))
-            }
-            Text(this.isInstalling ? $r('app.string.installing') : $r('app.string.install_hap'))
-              .fontSize(18)
-              .fontColor($r('app.color.button_text'))
-          }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)
-        }
-        .width('100%')
-        .height(56)
-        .backgroundColor($r('app.color.primary_color'))
-        .borderRadius(12)
-        .enabled(!this.isInstalling)
-        .onClick(() => {
-          this.installHapPackage();
-        })
-        Button() {
-          Row({ space: 12 }) {
-            Image($r('app.media.rays'))
-              .width(24)
-              .height(24)
-              .fillColor($r('app.color.button_text'))
-            Text($r('app.string.reboot_nornal'))
-              .fontSize(18)
-              .fontColor($r('app.color.button_text'))
-          }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)
-        }
-        .width('100%')
-        .height(56)
-        .backgroundColor($r('app.color.success_color'))
-        .borderRadius(12)
-        .onClick(() => {
-          this.rebootNormal();
-        })
-        Button() {
-          Row({ space: 12 }) {
-            Image($r('app.media.rays'))
-              .width(24)
-              .height(24)
-              .fillColor($r('app.color.button_text'))
-            Text($r('app.string.reboot_recovery'))
-              .fontSize(18)
-              .fontColor($r('app.color.button_text'))
-          }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)
-        }
-        .width('100%')
-        .height(56)
-        .backgroundColor($r('app.color.primary_color'))
-        .borderRadius(12)
-        .onClick(() => {
-          this.rebootToRecovery();
-        })
+      Scroll() {
+        Column({ space: 20 }) {
+          // === Install Section ===
+          Column() {
+            this.SectionHeader('Package')
+            Column() {
+              Row() {
+                Row() {
+                  if (this.isInstalling) {
+                    LoadingProgress()
+                      .width(18)
+                      .height(18)
+                      .color(Color.White)
+                  } else {
+                    Image($r('app.media.install_hap'))
+                      .width(18)
+                      .height(18)
+                      .fillColor(Color.White)
+                  }
+                }
+                .width(32)
+                .height(32)
+                .borderRadius(8)
+                .backgroundColor($r('app.color.primary_color'))
+                .justifyContent(FlexAlign.Center)
 
-        Button() {
-          Row({ space: 12 }) {
-            Image($r('app.media.rays'))
-              .width(24)
-              .height(24)
-              .fillColor($r('app.color.button_text'))
-            Text($r('app.string.reboot_bootloader'))
-              .fontSize(18)
-              .fontColor($r('app.color.button_text'))
-          }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)
-        }
-        .width('100%')
-        .height(56)
-        .backgroundColor($r('app.color.accent_color'))
-        .borderRadius(12)
-        .onClick(() => {
-          this.rebootToBootloader();
-        })
+                Text(this.isInstalling ? $r('app.string.installing') : $r('app.string.install_hap'))
+                  .fontSize(16)
+                  .fontColor($r('app.color.text_primary'))
+                  .margin({ left: 14 })
+                  .layoutWeight(1)
 
-        if (deviceInfo.distributionOSName !== 'HarmonyOS') {
-          Button() {
-            Row({ space: 12 }) {
-              Image($r('app.media.rays'))
-                .width(24)
-                .height(24)
-                .fillColor($r('app.color.button_text'))
-              Text($r('app.string.target_mount'))
-                .fontSize(18)
-                .fontColor($r('app.color.button_text'))
+                Image($r('sys.media.ohos_ic_public_arrow_right'))
+                  .width(16)
+                  .height(16)
+                  .fillColor($r('app.color.text_tertiary'))
+              }
+              .width('100%')
+              .height(52)
+              .padding({ left: 14, right: 14 })
+              .enabled(!this.isInstalling)
+              .onClick(() => {
+                this.installHapPackage();
+              })
             }
             .width('100%')
-            .justifyContent(FlexAlign.Center)
+            .backgroundColor($r('app.color.card_background'))
+            .borderRadius(12)
           }
           .width('100%')
-          .height(56)
-          .backgroundColor($r('app.color.error_color'))
-          .borderRadius(12)
-          .onClick(() => {
-            this.targetMount();
-          })
 
-          Button() {
-            Row({ space: 12 }) {
-              Image($r('app.media.rays'))
-                .width(24)
-                .height(24)
-                .fillColor($r('app.color.button_text'))
-              Text($r('app.string.smode_root'))
-                .fontSize(18)
-                .fontColor($r('app.color.button_text'))
+          // === Reboot Section ===
+          Column() {
+            this.SectionHeader('Reboot')
+            Column() {
+              this.ActionRow($r('app.media.power'), $r('app.string.reboot_nornal'), $r('app.color.success_color'), () => {
+                this.rebootNormal();
+              })
+              Divider().color($r('app.color.divider_color')).margin({ left: 60 })
+              this.ActionRow($r('app.media.rays'), $r('app.string.reboot_recovery'), $r('app.color.primary_color'), () => {
+                this.rebootToRecovery();
+              })
+              Divider().color($r('app.color.divider_color')).margin({ left: 60 })
+              this.ActionRow($r('app.media.rays'), $r('app.string.reboot_bootloader'), $r('app.color.accent_color'), () => {
+                this.rebootToBootloader();
+              })
             }
             .width('100%')
-            .justifyContent(FlexAlign.Center)
+            .backgroundColor($r('app.color.card_background'))
+            .borderRadius(12)
           }
           .width('100%')
-          .height(56)
-          .backgroundColor($r('app.color.error_color'))
-          .borderRadius(12)
-          .onClick(() => {
-            this.smodeRoot();
-          })
-        }
-      }
-      .width('90%')
-      .margin({ top: 20 })
 
+          // === Advanced Section (OpenHarmony only) ===
+          if (deviceInfo.distributionOSName !== 'HarmonyOS') {
+            Column() {
+              this.SectionHeader('Advanced')
+              Column() {
+                this.ActionRow($r('app.media.bolt'), $r('app.string.target_mount'), $r('app.color.error_color'), () => {
+                  this.targetMount();
+                })
+                Divider().color($r('app.color.divider_color')).margin({ left: 60 })
+                this.ActionRow($r('app.media.bolt'), $r('app.string.smode_root'), $r('app.color.error_color'), () => {
+                  this.smodeRoot();
+                })
+              }
+              .width('100%')
+              .backgroundColor($r('app.color.card_background'))
+              .borderRadius(12)
+            }
+            .width('100%')
+          }
+        }
+        .width('100%')
+        .padding({ left: 20, right: 20, top: 8, bottom: 24 })
+      }
+      .layoutWeight(1)
+      .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
+      .align(Alignment.Top)
     }
     .width('100%')
     .height('100%')
