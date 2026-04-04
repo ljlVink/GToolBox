@@ -36,7 +36,7 @@ export default struct WebTerminal {
     Flex({
       direction: FlexDirection.Column
     }) {
-      MenuItem({ content: 'Copy' })
+      MenuItem({ content: $r('app.string.terminal_copy') })
         .width('100%')
         .onClick(async () => {
           const selection = await webController.runJavaScript('exports.copy()')

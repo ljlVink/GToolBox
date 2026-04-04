@@ -271,6 +271,54 @@
     {
       "name": "fault_logs_title",
       "value": "Fault Logs"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "Search..."
+    },
+    {
+      "name": "fault_log_loading",
+      "value": "Loading log..."
+    },
+    {
+      "name": "retry_button",
+      "value": "Retry"
+    },
+    {
+      "name": "terminal_copy",
+      "value": "Copy"
+    },
+    {
+      "name": "device_section_package",
+      "value": "Package"
+    },
+    {
+      "name": "device_section_reboot",
+      "value": "Reboot"
+    },
+    {
+      "name": "device_section_advanced",
+      "value": "Advanced"
+    },
+    {
+      "name": "fault_log_filter_all",
+      "value": "All"
+    },
+    {
+      "name": "about_app_name",
+      "value": "GToolBox"
+    },
+    {
+      "name": "about_github",
+      "value": "GitHub"
+    },
+    {
+      "name": "fault_log_records_info",
+      "value": "%d records · %d apps"
+    },
+    {
+      "name": "about_open_source_notice",
+      "value": "GToolBox is free and open-source software. If you paid for it, please refund immediately and greet their family members."
     }
   ]
 }

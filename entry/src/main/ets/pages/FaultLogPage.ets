@@ -201,7 +201,7 @@ export struct FaultLogPage {
     Column() {
       // Header
       Row() {
-        Search({ value: this.searchKeyword, placeholder: '搜索...' })
+        Search({ value: this.searchKeyword, placeholder: $r('app.string.search_placeholder') })
           .layoutWeight(1)
           .height(36)
           .backgroundColor($r('app.color.card_background'))
@@ -243,7 +243,7 @@ export struct FaultLogPage {
       // Filter chips
       Row({ space: 8 }) {
         ForEach(['all', 'cppcrash', 'jscrash', 'appfreeze'], (type: string) => {
-          Text(type === 'all' ? 'All' : type)
+          Text(type === 'all' ? $r('app.string.fault_log_filter_all') : type)
             .fontSize(12)
             .fontColor(this.filterType === type ? '#FFFFFF' : $r('app.color.text_secondary'))
             .padding({ left: 12, right: 12, top: 6, bottom: 6 })
@@ -263,7 +263,7 @@ export struct FaultLogPage {
 
       // Record count
       Row() {
-        Text(`${this.filteredCount} records · ${this.getVisibleGroups().length} apps`)
+        Text(getContext(this).resourceManager.getStringSync($r('app.string.fault_log_records_info').id, this.filteredCount, this.getVisibleGroups().length))
           .fontSize(12)
           .fontColor($r('app.color.text_tertiary'))
       }

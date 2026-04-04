@@ -120,7 +120,7 @@ export struct DevicePage {
   }
 
   @Builder
-  SectionHeader(title: string) {
+  SectionHeader(title: Resource) {
     Text(title)
       .fontSize(13)
       .fontColor($r('app.color.text_tertiary'))
@@ -185,7 +185,7 @@ export struct DevicePage {
         Column({ space: 20 }) {
           // === Install Section ===
           Column() {
-            this.SectionHeader('Package')
+            this.SectionHeader($r('app.string.device_section_package'))
             Column() {
               Row() {
                 Row() {
@@ -234,7 +234,7 @@ export struct DevicePage {
 
           // === Reboot Section ===
           Column() {
-            this.SectionHeader('Reboot')
+            this.SectionHeader($r('app.string.device_section_reboot'))
             Column() {
               this.ActionRow($r('app.media.power'), $r('app.string.reboot_nornal'), $r('app.color.success_color'), () => {
                 this.rebootNormal();
@@ -257,7 +257,7 @@ export struct DevicePage {
           // === Advanced Section (OpenHarmony only) ===
           if (deviceInfo.distributionOSName !== 'HarmonyOS') {
             Column() {
-              this.SectionHeader('Advanced')
+              this.SectionHeader($r('app.string.device_section_advanced'))
               Column() {
                 this.ActionRow($r('app.media.bolt'), $r('app.string.target_mount'), $r('app.color.error_color'), () => {
                   this.targetMount();

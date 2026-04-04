@@ -250,7 +250,7 @@ export struct HomePage {
             .fontWeight(FontWeight.Bold)
             .fontColor($r('app.color.text_primary'))
           Blank()
-          Search({ value: this.searchKeyword, placeholder: '搜索...' })
+          Search({ value: this.searchKeyword, placeholder: $r('app.string.search_placeholder') })
             .width(200)
             .height(36)
             .backgroundColor($r('app.color.card_background'))

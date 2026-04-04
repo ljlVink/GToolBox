@@ -239,14 +239,14 @@ export struct SettingsPage {
             Divider()
               .margin({ top: 20, bottom: 10 })
 
-            Text('Gtoolbox')
+            Text($r('app.string.about_app_name'))
               .fontSize(18)
               .fontWeight(FontWeight.Bold)
               .fontColor($r('app.color.text_primary'))
               .alignSelf(ItemAlign.Start)
 
             Row() {
-              Text('GitHub')
+              Text($r('app.string.about_github'))
                 .fontSize(14)
                 .fontColor($r('app.color.primary_color'))
                 .decoration({ type: TextDecorationType.Underline })
@@ -256,13 +256,7 @@ export struct SettingsPage {
             }
             .alignSelf(ItemAlign.Start)
 
-            Text('GToolBox是免费开源软件，如果你付费购买请立即退款并问候其家人')
-              .fontSize(14)
-              .fontColor($r('app.color.text_secondary'))
-              .lineHeight(22)
-              .textAlign(TextAlign.Start)
-              .width('100%')
-            Text('GToolBox is free and open-source software. If you paid for it, please refund immediately and greet their family members.')
+            Text($r('app.string.about_open_source_notice'))
               .fontSize(14)
               .fontColor($r('app.color.text_secondary'))
               .lineHeight(22)

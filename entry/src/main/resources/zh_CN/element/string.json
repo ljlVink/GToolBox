@@ -259,6 +259,54 @@
     {
       "name": "fault_logs_title",
       "value": "APP崩溃日志"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "搜索..."
+    },
+    {
+      "name": "fault_log_loading",
+      "value": "正在加载日志..."
+    },
+    {
+      "name": "retry_button",
+      "value": "重试"
+    },
+    {
+      "name": "terminal_copy",
+      "value": "复制"
+    },
+    {
+      "name": "device_section_package",
+      "value": "应用包"
+    },
+    {
+      "name": "device_section_reboot",
+      "value": "重启"
+    },
+    {
+      "name": "device_section_advanced",
+      "value": "高级"
+    },
+    {
+      "name": "fault_log_filter_all",
+      "value": "全部"
+    },
+    {
+      "name": "about_app_name",
+      "value": "GToolBox"
+    },
+    {
+      "name": "about_github",
+      "value": "GitHub"
+    },
+    {
+      "name": "fault_log_records_info",
+      "value": "%d 条记录 · %d 个应用"
+    },
+    {
+      "name": "about_open_source_notice",
+      "value": "GToolBox是免费开源软件，如果你付费购买请立即退款并问候其家人"
     }
   ]
 }

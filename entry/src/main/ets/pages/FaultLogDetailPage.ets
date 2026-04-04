@@ -263,7 +263,7 @@ struct FaultLogDetailPage {
             .width(48)
             .height(48)
             .color($r('app.color.icon_color'))
-          Text('正在加载日志...')
+          Text($r('app.string.fault_log_loading'))
             .fontSize(14)
             .fontColor($r('app.color.text_tertiary'))
             .margin({ top: 12 })
@@ -280,7 +280,7 @@ struct FaultLogDetailPage {
             .padding(12)
             .backgroundColor($r('app.color.card_background'))
             .borderRadius(8)
-          Button('重试')
+          Button($r('app.string.retry_button'))
             .margin({ top: 12 })
             .onClick(() => {
               this.fetchLogDetail();
