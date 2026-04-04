@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/MainPage",
-    "pages/FaultLogDetailPage"
+    "pages/FaultLogDetailPage",
+    "pages/LogPage"
   ]
 }

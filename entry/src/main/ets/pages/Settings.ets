@@ -2,7 +2,7 @@ import { preferences } from '@kit.ArkData';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
 import { fileIo as fs } from '@kit.CoreFileKit';
-import { LogService } from '../utils/LogService';
+import { router } from '@kit.ArkUI';
 
 @Component
 export struct SettingsPage {
@@ -11,22 +11,10 @@ export struct SettingsPage {
   @State hideAtomicService: boolean = true;
   @State skipAppIcon: boolean = true;
   @State deleteKeyStatus: string = '';
-  @State showLogPage: boolean = false;
-  @State logText: string = '';
   private preferencesStore: preferences.Preferences | null = null;
-  private logService: LogService = LogService.getInstance();
-  private logUpdateListener = (logs: string) => {
-    this.logText = logs;
-  };
 
   async aboutToAppear() {
     await this.loadSettings();
-    this.logText = this.logService.getLogs();
-    this.logService.addListener(this.logUpdateListener);
-  }
-
-  aboutToDisappear() {
-    this.logService.removeListener(this.logUpdateListener);
   }
 
   async loadSettings() {
@@ -113,29 +101,6 @@ export struct SettingsPage {
       const errorMsg = await context.resourceManager.getStringValue($r('app.string.delete_key_failed'));
       this.deleteKeyStatus = errorMsg.replace('{0}', (error as BusinessError).message);
     }
-  }
-
-  @Builder
-  LogCoverBuilder() {
-    Column() {
-
-      Scroll() {
-        Text(this.logText)
-          .fontSize(14)
-          .fontColor($r('app.color.text_primary'))
-          .padding(10)
-          .backgroundColor($r('app.color.log_background'))
-          .width('100%')
-      }
-      .layoutWeight(1)
-      .width('90%')
-      .align(Alignment.TopStart)
-      .border({ width: 1, color: $r('app.color.border_color'), radius: 8 })
-    }
-    .width('100%')
-    .height('100%')
-    .backgroundColor($r('app.color.page_background'))
-    .padding({ top: 50 })
   }
 
   build() {
@@ -276,7 +241,7 @@ export struct SettingsPage {
           .width('100%')
           .height(50)
           .onClick(() => {
-            this.showLogPage = true;
+            router.pushUrl({ url: 'pages/LogPage' });
           })
 
           Column({ space: 12 }) {
@@ -323,8 +288,5 @@ export struct SettingsPage {
       .width('100%')
       .height('100%')
       .backgroundColor($r('app.color.page_background'))
-      .bindContentCover($$this.showLogPage, this.LogCoverBuilder(), {
-        modalTransition: ModalTransition.DEFAULT
-      })
   }
 }

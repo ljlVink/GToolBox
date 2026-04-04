@@ -59,7 +59,7 @@ struct MainPage {
           FaultLogPage()
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.fault_logs_title'), 3, $r('app.media.power'), $r('app.media.power')))
+      .tabBar(this.TabBuilder($r('app.string.fault_logs_title'), 3, $r('app.media.exclamationmark'), $r('app.media.exclamationmark')))
 
       TabContent() {
         if (this.loadedTabs[4]) {
