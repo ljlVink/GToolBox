@@ -1,6 +1,6 @@
 export class LogService {
   private static instance: LogService;
-  private logs: string = 'Ready...\n';
+  private logs: string = "Ready...\n";
   private listeners: Array<(log: string) => void> = [];
 
   private constructor() {}
@@ -13,7 +13,7 @@ export class LogService {
   }
 
   appendLog(message: string) {
-    this.logs += message + '\n';
+    this.logs += message + "\n";
     console.info(message);
     this.notifyListeners();
   }
@@ -23,7 +23,7 @@ export class LogService {
   }
 
   clearLogs() {
-    this.logs = 'Ready...\n';
+    this.logs = "Ready...\n";
     this.notifyListeners();
   }
 
@@ -39,6 +39,6 @@ export class LogService {
   }
 
   private notifyListeners() {
-    this.listeners.forEach(listener => listener(this.logs));
+    this.listeners.forEach((listener) => listener(this.logs));
   }
 }

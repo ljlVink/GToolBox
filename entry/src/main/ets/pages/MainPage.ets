@@ -1,8 +1,8 @@
-import { HomePage } from './Index';
-import { SettingsPage } from './Settings';
-import { DevicePage } from './Device';
-import { TerminalPage } from './TerminalPage';
-import { FaultLogPage } from './FaultLogPage';
+import { HomePage } from "./Index";
+import { SettingsPage } from "./Settings";
+import { DevicePage } from "./Device";
+import { TerminalPage } from "./TerminalPage";
+import { FaultLogPage } from "./FaultLogPage";
 
 @Entry
 @Component
@@ -13,25 +13,31 @@ struct MainPage {
 
   @Builder
   TabBuilder(title: Resource, targetIndex: number, selectedImg: Resource, normalImg: Resource) {
-
     Column() {
-
       Image(this.currentIndex === targetIndex ? selectedImg : normalImg)
         .width(24)
         .height(24)
-        .fillColor(this.currentIndex === targetIndex ? $r('app.color.primary_color') : $r('app.color.icon_color'))
+        .fillColor(
+          this.currentIndex === targetIndex
+            ? $r("app.color.primary_color")
+            : $r("app.color.icon_color"),
+        )
       Text(title)
         .fontSize(12)
-        .fontColor(this.currentIndex === targetIndex ? $r('app.color.primary_color') : $r('app.color.text_tertiary'))
+        .fontColor(
+          this.currentIndex === targetIndex
+            ? $r("app.color.primary_color")
+            : $r("app.color.text_tertiary"),
+        )
         .margin({ top: 4 })
     }
-    .width('100%')
+    .width("100%")
     .height(56)
     .justifyContent(FlexAlign.Center)
     .onClick(() => {
       this.currentIndex = targetIndex;
       this.tabsController.changeIndex(targetIndex);
-    })
+    });
   }
 
   build() {
@@ -39,45 +45,76 @@ struct MainPage {
       TabContent() {
         HomePage()
       }
-      .tabBar(this.TabBuilder($r('app.string.home_title'), 0, $r('app.media.house'), $r('app.media.house')))
-
+      .tabBar(
+        this.TabBuilder(
+          $r("app.string.home_title"),
+          0,
+          $r("app.media.house"),
+          $r("app.media.house"),
+        ),
+      )
       TabContent() {
         if (this.loadedTabs[1]) {
-          DevicePage()
+          DevicePage();
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.device_title'), 1, $r('app.media.bolt'), $r('app.media.bolt')))
+      .tabBar(
+        this.TabBuilder(
+          $r("app.string.device_title"),
+          1,
+          $r("app.media.bolt"),
+          $r("app.media.bolt"),
+        ),
+      )
       TabContent() {
         if (this.loadedTabs[2]) {
-          TerminalPage()
+          TerminalPage();
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.terminal_title'), 2, $r('app.media.terminal'), $r('app.media.terminal')))
-
+      .tabBar(
+        this.TabBuilder(
+          $r("app.string.terminal_title"),
+          2,
+          $r("app.media.terminal"),
+          $r("app.media.terminal"),
+        ),
+      )
       TabContent() {
         if (this.loadedTabs[3]) {
-          FaultLogPage()
+          FaultLogPage();
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.fault_logs_title'), 3, $r('app.media.exclamationmark'), $r('app.media.exclamationmark')))
-
+      .tabBar(
+        this.TabBuilder(
+          $r("app.string.fault_logs_title"),
+          3,
+          $r("app.media.exclamationmark"),
+          $r("app.media.exclamationmark"),
+        ),
+      )
       TabContent() {
         if (this.loadedTabs[4]) {
-          SettingsPage()
+          SettingsPage();
         }
       }
-      .tabBar(this.TabBuilder($r('app.string.settings_title'), 4, $r('app.media.gearshape'), $r('app.media.gearshape')))
-
+      .tabBar(
+        this.TabBuilder(
+          $r("app.string.settings_title"),
+          4,
+          $r("app.media.gearshape"),
+          $r("app.media.gearshape"),
+        ),
+      )
     }
-    .width('100%')
-    .height('100%')
-    .barWidth('100%')
+    .width("100%")
+    .height("100%")
+    .barWidth("100%")
     .barHeight(56)
-    .barBackgroundColor($r('app.color.page_background'))
+    .barBackgroundColor($r("app.color.page_background"))
     .onChange((index: number) => {
       this.currentIndex = index;
       this.loadedTabs[index] = true; // 标记为已加载
     })
-    .vertical(false)
+    .vertical(false);
   }
 }
