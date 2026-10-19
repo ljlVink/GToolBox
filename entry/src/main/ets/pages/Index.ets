@@ -803,28 +803,27 @@ export struct HomePage {
           this.showCleanConfirmDialog = true;
         })
         Divider().color($r("app.color.divider_color"))
-        if (deviceInfo.sdkApiVersion < 23) {
-          Button() {
-            Row() {
-              Text(
-                this.selectedApp?.isGame
-                  ? $r("app.string.remove_from_game")
-                  : $r("app.string.set_game"),
-              )
-                .fontSize(16)
-                .fontColor($r("app.color.text_primary"))
-            }
-            .width("100%")
-            .justifyContent(FlexAlign.Center)
+        Button() {
+          Row() {
+            Text(
+              this.selectedApp?.isGame
+                ? $r("app.string.remove_from_game")
+                : $r("app.string.set_game"),
+            )
+              .fontSize(16)
+              .fontColor($r("app.color.text_primary"))
           }
           .width("100%")
-          .height(50)
-          .backgroundColor(Color.Transparent)
-          .onClick(() => {
-            this.toggleGameStatus();
-          });
-          Divider().color($r("app.color.divider_color"));
+          .justifyContent(FlexAlign.Center)
         }
+        .width("100%")
+        .height(50)
+        .backgroundColor(Color.Transparent)
+        .onClick(() => {
+          this.toggleGameStatus();
+        });
+        Divider().color($r("app.color.divider_color"));
+        
         Button() {
           Row() {
             Text($r("app.string.cancel"))

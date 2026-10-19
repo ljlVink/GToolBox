@@ -301,6 +301,22 @@
       "value": "Advanced"
     },
     {
+      "name": "device_section_bootargs",
+      "value": "Boot arguments"
+    },
+    {
+      "name": "bootargs_read",
+      "value": "Read Bootargs"
+    },
+    {
+      "name": "bootargs_loading",
+      "value": "Reading Bootargs..."
+    },
+    {
+      "name": "bootargs_failed",
+      "value": "Unable to read Bootargs. Check the HDC connection and whether HiDumper exposes /proc/cmdline."
+    },
+    {
       "name": "fault_log_filter_all",
       "value": "All"
     },

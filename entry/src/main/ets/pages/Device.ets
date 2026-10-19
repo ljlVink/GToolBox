@@ -15,15 +15,89 @@ async function backgroundCopyFile(
   await fs.copy(selectedUri, tempFileUri);
   return tempFilePath;
 }
+
+const BOOTARG_PRIORITIES: RegExp[] = [
+  /(?:^|\.)runmode$/i,
+  /(?:^|\.)buildvariant$/i,
+  /(?:^|\.)sn$/i,
+  /(?:^|\.)boardid$/i,
+  /(?:^|\.)device_state$/i,
+  /(?:^|\.)rdmode(?:_validity)?$/i,
+  /(?:^|\.)swtype$/i,
+  /(?:^|\.)vendorcountry$/i,
+  /(?:^|\.)uapp(?:[._]|$)/i,
+];
+
+function extractBootargs(output: string): string[] {
+  const match = output.match(
+    /(?:^|\r?\n)\/proc\/cmdline[ \t]*\r?\n(?:[ \t]*\r?\n)*([^\r\n]+)/,
+  );
+  if (!match) {
+    return [];
+  }
+  const cmdline = match[1].trim();
+  if (/^(?:cmd is:|\/proc\/|\[fail\]|error:)|permission denied|failed to/i.test(cmdline)) {
+    return [];
+  }
+  const args = cmdline.match(/(?:[^\s"]+|"[^"]*")+/g) ?? [];
+  const groups: string[][] = [];
+  for (let index = 0; index <= BOOTARG_PRIORITIES.length; index++) {
+    groups.push([]);
+  }
+  for (const argument of args) {
+    const separator = argument.indexOf("=");
+    const key = separator < 0 ? argument : argument.substring(0, separator);
+    let priority = 0;
+    while (priority < BOOTARG_PRIORITIES.length && !BOOTARG_PRIORITIES[priority].test(key)) {
+      priority++;
+    }
+    groups[priority].push(argument);
+  }
+  let index = 0;
+  for (const group of groups) {
+    for (const argument of group) {
+      args[index++] = argument;
+    }
+  }
+  return args;
+}
+
 @Component
 export struct DevicePage {
   @State isInstalling: boolean = false;
+  @State isLoadingBootargs: boolean = false;
+  @State bootargs: string[] = [];
+  @State bootargsFailed: boolean = false;
+  @State bootargsError: string = "";
   private hdcClient: HdcClient = new HdcClient();
   private context: common.UIAbilityContext | null = null;
   private logService: LogService = LogService.getInstance();
 
   aboutToAppear() {
     this.context = getContext(this) as common.UIAbilityContext;
+  }
+
+  private async fetchBootargs(): Promise<void> {
+    if (this.isLoadingBootargs) {
+      return;
+    }
+    this.isLoadingBootargs = true;
+    this.bootargs = [];
+    this.bootargsFailed = false;
+    this.bootargsError = "";
+    try {
+      const result = await this.hdcClient.executeCommand("shell hidumper -c base");
+      this.bootargs = extractBootargs(result);
+      if (this.bootargs.length === 0) {
+        this.bootargsFailed = true;
+        this.bootargsError = result.trim();
+      }
+    } catch (error) {
+      this.bootargsFailed = true;
+      this.bootargsError = (error as Error).message;
+    } finally {
+      this.isLoadingBootargs = false;
+    }
   }
 
   async rebootToRecovery() {
@@ -230,6 +304,84 @@ export struct DevicePage {
               .onClick(() => {
                 this.installHapPackage();
               })
+            }
+            .width("100%")
+            .backgroundColor($r("app.color.card_background"))
+            .borderRadius(12)
+          }.width("100%")
+
+          Column() {
+            this.SectionHeader($r("app.string.device_section_bootargs"))
+            Column() {
+              Column() {
+                this.ActionRow(
+                  $r("app.media.doc_plaintext"),
+                  this.isLoadingBootargs
+                    ? $r("app.string.bootargs_loading")
+                    : $r("app.string.bootargs_read"),
+                  $r("app.color.primary_color"),
+                  () => {
+                    this.fetchBootargs();
+                  },
+                )
+              }
+              .width("100%")
+              .enabled(!this.isLoadingBootargs)
+              if (this.isLoadingBootargs) {
+                LoadingProgress()
+                  .width(28)
+                  .height(28)
+                  .color($r("app.color.primary_color"))
+                  .margin({ bottom: 14 })
+              } else if (this.bootargsFailed) {
+                Column({ space: 8 }) {
+                  Text($r("app.string.bootargs_failed"))
+                    .fontSize(14)
+                    .fontColor($r("app.color.error_color"))
+                    .width("100%")
+                  if (this.bootargsError.length > 0) {
+                    Text(this.bootargsError)
+                      .fontSize(12)
+                      .fontColor($r("app.color.text_secondary"))
+                      .width("100%")
+                      .wordBreak(WordBreak.BREAK_ALL)
+                      .copyOption(CopyOptions.LocalDevice)
+                  }
+                }
+                .width("100%")
+                .padding({ left: 14, right: 14, bottom: 14 })
+              } else if (this.bootargs.length > 0) {
+                Divider()
+                  .color($r("app.color.divider_color"))
+                  .margin({ left: 14, right: 14 })
+                List() {
+                  ForEach(this.bootargs, (argument: string) => {
+                    ListItem() {
+                      Text(argument)
+                        .fontSize(12)
+                        .fontFamily("monospace")
+                        .fontColor($r("app.color.text_primary"))
+                        .width("100%")
+                        .padding({ left: 14, right: 14, top: 10, bottom: 10 })
+                        .wordBreak(WordBreak.BREAK_ALL)
+                        .copyOption(CopyOptions.LocalDevice)
+                    }
+                  })
+                }
+                .width("100%")
+                .height(320)
+                .divider({
+                  strokeWidth: 1,
+                  color: $r("app.color.divider_color"),
+                  startMargin: 14,
+                  endMargin: 14,
+                })
+                .scrollBar(BarState.Auto)
+                .nestedScroll({
+                  scrollForward: NestedScrollMode.SELF_FIRST,
+                  scrollBackward: NestedScrollMode.SELF_FIRST,
+                })
+              }
             }
             .width("100%")
             .backgroundColor($r("app.color.card_background"))

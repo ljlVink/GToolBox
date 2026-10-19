@@ -289,6 +289,22 @@
       "value": "高级"
     },
     {
+      "name": "device_section_bootargs",
+      "value": "启动参数"
+    },
+    {
+      "name": "bootargs_read",
+      "value": "读取 Bootargs"
+    },
+    {
+      "name": "bootargs_loading",
+      "value": "正在读取 Bootargs..."
+    },
+    {
+      "name": "bootargs_failed",
+      "value": "无法读取 Bootargs，请检查 HDC 连接及 HiDumper 是否开放 /proc/cmdline。"
+    },
+    {
       "name": "fault_log_filter_all",
       "value": "全部"
     },
